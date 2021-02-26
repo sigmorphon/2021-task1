@@ -94,7 +94,7 @@ Evaluation
 The metric used to rank systems is *word error rate* (WER), the percentage of
 words for which the hypothesized transcription sequence does not match the gold
 transcription. This value, in accordance with common practice, is a decimal
-value multiplied by 100 (Example: 93.532). In the medium- and low-frequency
+value multiplied by 100 (e.g.: 13.53). In the medium- and low-frequency
 tasks, WER is macro-averaged across all ten languages. We provide two Python
 scripts for evaluation:
 
@@ -134,8 +134,7 @@ of this system (Makarov & Clematide 2020) was the second-best system overall in
 the 2020 shared task (Gorman et al. 2020). Code, predictions, and results for
 the baseline will also be provided.
 
-```{=html}
-<!-- TODO: Add links here -->
+**TBD**: Add links to the baseline library.
 ```
 Comparison with the 2020 shared task
 ------------------------------------
