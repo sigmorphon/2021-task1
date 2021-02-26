@@ -135,7 +135,7 @@ the 2020 shared task (Gorman et al. 2020). Code, predictions, and results for
 the baseline will also be provided.
 
 **TBD**: Add links to the baseline library.
-```
+
 Comparison with the 2020 shared task
 ------------------------------------
 
