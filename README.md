@@ -1,5 +1,4 @@
-Task 1: Second SIGMORPHON Shared Task on Grapheme-to-Phoneme Conversions
-========================================================================
+# Task 1: Second SIGMORPHON Shared Task on Grapheme-to-Phoneme Conversions
 
 In this task, participants will create computational models that map a sequence
 of "graphemes"---characters---representing a word to a transcription of that
@@ -8,8 +7,7 @@ including recognition and synthesis. This is the second iteration of this task.
 
 **TBD**: mailing list sign-up.
 
-Data
-----
+## Data
 
 ### Source
 
@@ -88,24 +86,20 @@ the following ten languages:
 
 Subtask 3 participants are not permitted to use any external resources.
 
-Evaluation
-----------
+## Evaluation
 
 The metric used to rank systems is *word error rate* (WER), the percentage of
 words for which the hypothesized transcription sequence does not match the gold
 transcription. This value, in accordance with common practice, is a decimal
-value multiplied by 100 (e.g.: 13.53). In the medium- and low-frequency
-tasks, WER is macro-averaged across all ten languages. We provide two Python
-scripts for evaluation:
+value multiplied by 100 (e.g.: 13.53). In the medium- and low-frequency tasks,
+WER is macro-averaged across all ten languages. We provide two Python scripts
+for evaluation:
 
-**TBD**: Links to evaluation code.
+-   [`evaluate.py`](evaluation/evaluate.py) computes the WER for one language.
+-   [`evaluate_all.py`](evaluation/evaluate_all.py) computes per-language and
+    average WER across multiple languages.
 
--   `evaluate.py` computes the WER for one language.
--   `evaluate_all.py` computes per-language and average WER across multiple
-    languages.
-
-Submission
-----------
+## Submission
 
 **Please submit your results in the two-column (grapheme sequence,
 tab-character, tokenized phone sequence) TSV format, the same one used for the
@@ -114,8 +108,7 @@ than NFC, you must convert back before submitting.
 
 **TBD**: Email for submission.
 
-Timeline
---------
+## Timeline
 
 **TBD**: This is currently estimated and may change in the near future.
 
@@ -125,8 +118,7 @@ Timeline
 -   May 8, 2021: Participants' draft system description papers due.
 -   May 15, 2021: Participants' camera-ready system description papers due.
 
-Baseline
---------
+## Baseline
 
 This year's baseline is a ensembled neural transition system based on the
 imitation learning paradigm introduced by Makarov & Clematide (2018). A variant
@@ -136,8 +128,7 @@ the baseline will also be provided.
 
 **TBD**: Add links to the baseline library.
 
-Comparison with the 2020 shared task
-------------------------------------
+## Comparison with the 2020 shared task
 
 In contrast to the 2020 shared task (Gorman et al. 2020):
 
@@ -147,16 +138,14 @@ In contrast to the 2020 shared task (Gorman et al. 2020):
 -   There are no suprise languages.
 -   The data been subjected to novel quality-assurance procedures.
 
-Organizers
-----------
+## Organizers
 
 The task is organized by members of the Computational Linguistics Lab at the
 [Graduate Center, City University of New York](https://gc.cuny.edu/Home) and the
 Institut für Computerlinguistik at the [University of
 Zurich](https://www.uzh.ch/en.html).
 
-References
-----------
+## References
 
 Gorman, K., Ashby, L. F.E., Goyzueta, A., McCarthy, A. D., Wu, S., and You, D.
 2020. [The SIGMORPHON 2020 shared task on multilingual grapheme-to-phoneme
