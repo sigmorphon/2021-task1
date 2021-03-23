@@ -1,7 +1,7 @@
 # Task 1: Second SIGMORPHON Shared Task on Grapheme-to-Phoneme Conversions
 
 In this task, participants will create computational models that map a sequence
-of "graphemes"---characters---representing a word to a transcription of that
+of "graphemes"&mdash;characters&mdash;representing a word to a transcription of that
 word's pronunciation. This task is an important part of speech technologies,
 including recognition and synthesis. This is the second iteration of this task.
 
@@ -21,9 +21,9 @@ filtered and downsampled using proprietary techniques.
 ### Format
 
 Training and development data are UTF-8-encoded tab-separated values files. Each
-example occupies a single line and consists of a grapheme sequence---a sequence
+example occupies a single line and consists of a grapheme sequence&mdash;a sequence
 of [NFC](https://en.wikipedia.org/wiki/Unicode_equivalence#Normal_forms) Unicode
-codepoints---a tab character, and the corresponding phone sequence, a
+codepoints&mdash;a tab character, and the corresponding phone sequence, a
 roughly-phonemic IPA, tokenized using the
 [`segments`](https://github.com/cldf/segments) library. The following shows
 three lines of Romanian data:
