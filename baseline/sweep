@@ -1,0 +1,83 @@
+#!/bin/bash
+
+set -euo pipefail
+
+readonly DATA=../data
+readonly EVALUATION=../evaluation
+readonly OUTPUT=output
+
+# Defaults.
+readonly BEAM_WIDTH=4
+readonly EPOCHS=60
+readonly PATIENCE=12
+readonly SED_EM_ITERATIONS=10
+readonly MAX_ENSEMBLE_SIZE=10
+
+train() {
+    #for LEVEL in low medium high; do
+    for LEVEL in high; do
+        for TRAIN in "${DATA}/${LEVEL}/"*"_train.tsv"; do
+            DEV="${TRAIN//_train.tsv/_dev.tsv}"
+            # TODO(kbg): Add test path when test data becomes available.
+            LG="$(basename ${TRAIN} _train.tsv)"
+            for ENSEMBLE_SIZE in $(seq 1 "${MAX_ENSEMBLE_SIZE}"); do
+                # We apply NFD unicode normalization.
+                python trans/train.py \
+                    --dynet-seed="${ENSEMBLE_SIZE}" \
+                    --train="${TRAIN}" \
+                    --dev="${DEV}" \
+                    --sed-em-iterations="${SED_EM_ITERATIONS}" \
+                    --output="${OUTPUT}/${LG}/${ENSEMBLE_SIZE}" \
+                    --epochs="${EPOCHS}" \
+                    --beam-width="${BEAM_WIDTH}" \
+                    --patience="${PATIENCE}" \
+                    --nfd &
+            done
+            wait
+        done
+    done
+}
+
+ensemble() {
+    #for LEVEL in low medium high; do
+    for LEVEL in high; do
+        # TODO(kbg): Add test ensembles when test data becomes available.
+        for DEV in "${DATA}/${LEVEL}/"*"_dev.tsv"; do
+            LG="$(basename ${DEV} _dev.tsv)"
+            python trans/ensembling.py \
+                --gold="${DATA}/${LEVEL}/${LG}_dev.tsv" \
+                --systems "${OUTPUT}/${LG}/"*"/dev_beam${BEAM_WIDTH}.predictions" \
+                --output="${OUTPUT}/${LG}/ensemble"
+        done
+    done
+}
+
+evaluate() {
+    # Prepares evaluation TSVs.
+    #for LEVEL in low medium high; do
+    for LEVEL in high; do
+        # TODO(kbg): Revert to test path when test data becomes available.
+        for DEV in "${DATA}/${LEVEL}/"*"_dev.tsv"; do
+            LG="$(basename ${DEV} _dev.tsv)"
+            paste \
+                "${DEV}" \
+                "${OUTPUT}/${LG}/ensemble/dev_${MAX_ENSEMBLE_SIZE}ensemble.predictions" \
+            | cut -f2,4 \
+	    > "${OUTPUT}/${LG}/ensemble/dev_${MAX_ENSEMBLE_SIZE}ensemble.tsv"
+        done
+    done
+    # Actually runs the evaluation.
+    python ${EVALUATION}/./evaluate_all.py \
+        "${OUTPUT}/ady/ensemble/dev_${MAX_ENSEMBLE_SIZE}ensemble.tsv"
+}
+
+main() {
+    rm -rf ${OUTPUT}
+    mkdir "${OUTPUT}"
+
+    train
+    ensemble
+    evaluate
+}
+
+main
