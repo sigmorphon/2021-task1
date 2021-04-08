@@ -23,7 +23,8 @@ def main(args: argparse.Namespace):
 
     logging.info(
         "Producing a majority-vote prediction file from %d system files.",
-        len(args.systems))
+        len(args.systems),
+    )
 
     with open(args.gold, encoding="utf8") as f:
         gold = read_files(f)
@@ -38,7 +39,8 @@ def main(args: argparse.Namespace):
         if len(system) != length:
             raise ValueError(
                 f"Number of lines mismatch between gold and {j}th system file: "
-                f"{length} vs {len(system)}.")
+                f"{length} vs {len(system)}."
+            )
 
     line_number = 0
     correct = 0
@@ -53,8 +55,9 @@ def main(args: argparse.Namespace):
                     f"Line {line_number}: {input_} vs {system_sample.input}."
                 )
             sample_predictions.append(system_sample.target)
-        majority_prediction = \
-            collections.Counter(sample_predictions).most_common(1)[0][0]
+        majority_prediction = collections.Counter(
+            sample_predictions
+        ).most_common(1)[0][0]
         if majority_prediction == gold_sample.target:
             correct += 1
         predictions.append(f"{input_}\t{majority_prediction}")
@@ -64,9 +67,14 @@ def main(args: argparse.Namespace):
     dataset_name = "test" if "test" in os.path.basename(args.gold) else "dev"
     decoding_name = f"{len(args.systems)}ensemble"
     utils.write_results(
-        accuracy, predictions, args.output, normalize=False,
-        dataset_name=dataset_name, decoding_name=decoding_name,
-        dargs=args.__dict__)
+        accuracy,
+        predictions,
+        args.output,
+        normalize=False,
+        dataset_name=dataset_name,
+        decoding_name=decoding_name,
+        dargs=args.__dict__,
+    )
 
 
 if __name__ == "__main__":
@@ -74,13 +82,21 @@ if __name__ == "__main__":
     logging.basicConfig(level="INFO", format="%(levelname)s: %(message)s")
 
     parser = argparse.ArgumentParser(
-        description="Produce a majority-vote output file.")
-    parser.add_argument("--gold", type=str, required=True,
-                        help="Path to gold data.")
-    parser.add_argument("--systems", type=str, required=True, nargs="+",
-                        help="Path to systems' data.")
-    parser.add_argument("--output", type=str, required=True,
-                        help="Output directory.")
+        description="Produce a majority-vote output file."
+    )
+    parser.add_argument(
+        "--gold", type=str, required=True, help="Path to gold data."
+    )
+    parser.add_argument(
+        "--systems",
+        type=str,
+        required=True,
+        nargs="+",
+        help="Path to systems' data.",
+    )
+    parser.add_argument(
+        "--output", type=str, required=True, help="Output directory."
+    )
 
     args = parser.parse_args()
     main(args)

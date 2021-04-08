@@ -23,13 +23,14 @@ class DecodingOutput:
 
 
 class OpenNormalize:
-
     def __init__(self, filename: str, normalize: bool, mode: str = "rt"):
         self.filename = filename
         self.file: Optional[TextIO] = None
         mode_pattern = re.compile(r"[arw]t?$")
         if not mode_pattern.match(mode):
-            raise ValueError(f"Unexpected mode {mode_pattern.pattern}: {mode}.")
+            raise ValueError(
+                f"Unexpected mode {mode_pattern.pattern}: {mode}."
+            )
         self.mode = mode
         if normalize:
             form = "NFD" if self.mode.startswith("r") else "NFC"
@@ -48,17 +49,24 @@ class OpenNormalize:
     def write(self, line: str):
         if not isinstance(line, str):
             raise ValueError(
-                f"Line is not a unicode string ({type(line)}): {line}")
+                f"Line is not a unicode string ({type(line)}): {line}"
+            )
         return self.file.write(self.normalize(line))
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.file.close()
 
 
-def write_results(accuracy: float, predictions: List[str], output: str,
-                  normalize: bool, dataset_name: str, beam_width: int = 1,
-                  decoding_name: Optional[str] = None,
-                  dargs: Dict[str, Any] = None):
+def write_results(
+    accuracy: float,
+    predictions: List[str],
+    output: str,
+    normalize: bool,
+    dataset_name: str,
+    beam_width: int = 1,
+    decoding_name: Optional[str] = None,
+    dargs: Dict[str, Any] = None,
+):
 
     logging.info("%s set accuracy: %.4f.", dataset_name.title(), accuracy)
 
@@ -74,14 +82,14 @@ def write_results(accuracy: float, predictions: List[str], output: str,
         w.write(f"{dataset_name} accuracy: {accuracy:.4f}\n")
 
     predictions_tsv = os.path.join(
-        output, f"{dataset_name}_{decoding_name}.predictions")
+        output, f"{dataset_name}_{decoding_name}.predictions"
+    )
 
     with OpenNormalize(predictions_tsv, normalize, mode="w") as w:
         w.write("\n".join(predictions))
 
 
 class Timer:
-
     def __init__(self):
         self.time = None
 

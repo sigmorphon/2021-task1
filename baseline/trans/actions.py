@@ -10,27 +10,23 @@ class Edit(abc.ABC):
 
 @dataclasses.dataclass(frozen=True, eq=True)
 class BeginOfSequence(Edit):
-
     def __repr__(self):
         return "\u27ea"
 
 
 @dataclasses.dataclass(frozen=True, eq=True)
 class EndOfSequence(Edit):
-
     def __repr__(self):
         return "\u27eb"
 
 
 class GenerativeEdit(Edit):
-
     @abc.abstractmethod
     def conditional_counterpart(self):
         raise NotImplementedError
 
 
 class ConditionalEdit(Edit):
-
     def conditional_counterpart(self):
         return self
 
@@ -94,10 +90,10 @@ class Ins(GenerativeEdit):
 
 
 class Aligner(abc.ABC):
-
     @abc.abstractmethod
-    def action_sequence_cost(self, x: Sequence[Any], y: Sequence[Any],
-                             x_offset: int, y_offset: int) -> float:
+    def action_sequence_cost(
+        self, x: Sequence[Any], y: Sequence[Any], x_offset: int, y_offset: int
+    ) -> float:
         raise NotImplementedError
 
     @abc.abstractmethod

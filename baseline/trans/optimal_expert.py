@@ -8,21 +8,32 @@ import dataclasses
 
 import numpy as np
 
-from trans.actions import ConditionalCopy, ConditionalDel, ConditionalIns, \
-    Edit, EndOfSequence
+from trans.actions import (
+    ConditionalCopy,
+    ConditionalDel,
+    ConditionalIns,
+    Edit,
+    EndOfSequence,
+)
 
 
 class Expert(abc.ABC):
-
     @abc.abstractmethod
-    def score(self, x: Sequence[Any], t: Sequence[Any], i: int,
-              y: Sequence[Any]):
+    def score(
+        self, x: Sequence[Any], t: Sequence[Any], i: int, y: Sequence[Any]
+    ):
         raise NotImplementedError
 
 
-def edit_distance(x: Sequence[Any], y: Sequence[Any],
-                  del_cost: float, ins_cost: float, sub_cost: float,
-                  x_offset: int, y_offset: int) -> np.ndarray:
+def edit_distance(
+    x: Sequence[Any],
+    y: Sequence[Any],
+    del_cost: float,
+    ins_cost: float,
+    sub_cost: float,
+    x_offset: int,
+    y_offset: int,
+) -> np.ndarray:
     x_size = len(x) - x_offset + 1
     y_size = len(y) - y_offset + 1
     prefix_matrix = np.full((x_size, y_size), np.inf, dtype=np.float_)
@@ -33,27 +44,34 @@ def edit_distance(x: Sequence[Any], y: Sequence[Any],
     for i in range(1, x_size):
         for j in range(1, y_size):
             if x[i - 1 + x_offset] == y[j - 1 + y_offset]:
-                substitution = 0.
+                substitution = 0.0
             else:
                 substitution = sub_cost
             prefix_matrix[i, j] = min(
                 prefix_matrix[i - 1, j] + del_cost,
                 prefix_matrix[i, j - 1] + ins_cost,
-                prefix_matrix[i - 1, j - 1] + substitution
+                prefix_matrix[i - 1, j - 1] + substitution,
             )
     return prefix_matrix
 
 
 def levenshtein_distance(x: Sequence[Any], y: Sequence[Any]) -> np.ndarray:
     return edit_distance(
-        x, y, del_cost=1., ins_cost=1., sub_cost=1., x_offset=0, y_offset=0)
+        x, y, del_cost=1.0, ins_cost=1.0, sub_cost=1.0, x_offset=0, y_offset=0
+    )
 
 
-def action_sequence_cost(x: Sequence[Any], y: Sequence[Any],
-                         x_offset: int, y_offset: int) -> float:
+def action_sequence_cost(
+    x: Sequence[Any], y: Sequence[Any], x_offset: int, y_offset: int
+) -> float:
     ed = edit_distance(
-        x, y, del_cost=1., ins_cost=1., sub_cost=np.inf,
-        x_offset=x_offset, y_offset=y_offset
+        x,
+        y,
+        del_cost=1.0,
+        ins_cost=1.0,
+        sub_cost=np.inf,
+        x_offset=x_offset,
+        y_offset=y_offset,
     )
     return ed[-1, -1]
 
@@ -66,7 +84,7 @@ class Prefix:
 
     @property
     def suffix(self):
-        return self.t[self.j:]
+        return self.t[self.j :]
 
     @property
     def leftmost_of_suffix(self):
@@ -83,13 +101,17 @@ class ActionsPrefix:
 
 
 class OptimalExpert(Expert):
-
     def __init__(self, maximum_output_length: int = 150):
 
         self.maximum_output_length = maximum_output_length
 
-    def find_valid_actions(self, x: Sequence[Any], i: int, y: Sequence[Any],
-                           prefixes: Iterable[Prefix]):
+    def find_valid_actions(
+        self,
+        x: Sequence[Any],
+        i: int,
+        y: Sequence[Any],
+        prefixes: Iterable[Prefix],
+    ):
         if len(y) >= self.maximum_output_length:
             return {EndOfSequence()}
         input_not_empty = i < len(x)
@@ -117,8 +139,13 @@ class OptimalExpert(Expert):
             prefixes.append(Prefix(y, t, j))
         return prefixes
 
-    def roll_out(self, x: Sequence[Any], t: Sequence[Any], i: int,
-                 actions_prefixes: Iterable[ActionsPrefix]):
+    def roll_out(
+        self,
+        x: Sequence[Any],
+        t: Sequence[Any],
+        i: int,
+        actions_prefixes: Iterable[ActionsPrefix],
+    ):
         costs_to_go = dict()
         for actions_prefix in actions_prefixes:
             suffix_begin = actions_prefix.prefix.j
@@ -145,8 +172,9 @@ class OptimalExpert(Expert):
                     costs_to_go[action] = cost
         return costs_to_go
 
-    def score(self, x: Sequence[Any], t: Sequence[Any], i: int,
-              y: Sequence[Any]):
+    def score(
+        self, x: Sequence[Any], t: Sequence[Any], i: int, y: Sequence[Any]
+    ):
 
         prefixes = self.find_prefixes(y, t)
         valid_actions = self.find_valid_actions(x, i, y, prefixes)

@@ -2,13 +2,18 @@
 import unittest
 
 from trans import vocabulary
-from trans.actions import BeginOfSequence, ConditionalDel, ConditionalCopy, \
-    ConditionalIns, ConditionalSub, EndOfSequence
+from trans.actions import (
+    BeginOfSequence,
+    ConditionalDel,
+    ConditionalCopy,
+    ConditionalIns,
+    ConditionalSub,
+    EndOfSequence,
+)
 from trans.vocabulary import UNK_CHAR
 
 
 class VocabularyTests(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls) -> None:
         cls.vocabulary = vocabulary.Vocabulary()
@@ -23,26 +28,43 @@ class VocabularyTests(unittest.TestCase):
         i2w2 = [3, 4, 5]
         vocabulary1 = vocabulary.Vocabulary(i2w1)
         self.assertListEqual(
-            [BeginOfSequence(), EndOfSequence(), UNK_CHAR],
-            vocabulary1.i2w)
+            [BeginOfSequence(), EndOfSequence(), UNK_CHAR], vocabulary1.i2w
+        )
         self.assertDictEqual(
             {BeginOfSequence(): 0, EndOfSequence(): 1, UNK_CHAR: 2},
-            vocabulary1.w2i)
+            vocabulary1.w2i,
+        )
         vocabulary2 = vocabulary.Vocabulary(i2w2)
         self.assertListEqual(
             [BeginOfSequence(), EndOfSequence(), UNK_CHAR, 3, 4, 5],
-            vocabulary2.i2w)
+            vocabulary2.i2w,
+        )
         self.assertDictEqual(
-            {BeginOfSequence(): 0, EndOfSequence(): 1, UNK_CHAR: 2,
-             3: 3, 4: 4, 5: 5},
-            vocabulary2.w2i)
+            {
+                BeginOfSequence(): 0,
+                EndOfSequence(): 1,
+                UNK_CHAR: 2,
+                3: 3,
+                4: 4,
+                5: 5,
+            },
+            vocabulary2.w2i,
+        )
 
     def test_actions(self):
         vocabulary1 = vocabulary.ActionVocabulary()
-        expected_i2w = [BeginOfSequence(), EndOfSequence(),
-                        ConditionalDel(), ConditionalCopy()]
-        expected_w2i = {BeginOfSequence(): 0, EndOfSequence(): 1,
-                        ConditionalDel(): 2, ConditionalCopy(): 3}
+        expected_i2w = [
+            BeginOfSequence(),
+            EndOfSequence(),
+            ConditionalDel(),
+            ConditionalCopy(),
+        ]
+        expected_w2i = {
+            BeginOfSequence(): 0,
+            EndOfSequence(): 1,
+            ConditionalDel(): 2,
+            ConditionalCopy(): 3,
+        }
         self.assertListEqual(expected_i2w, vocabulary1.i2w)
         self.assertDictEqual(expected_w2i, vocabulary1.w2i)
 
@@ -68,10 +90,16 @@ class VocabularyTests(unittest.TestCase):
     def test_vocabularies_encode_actions(self):
         vocabulary1 = vocabulary.Vocabularies()
         vocabulary1.encode_actions("baa")
-        expected_i2w = [BeginOfSequence(), EndOfSequence(),
-                        ConditionalDel(), ConditionalCopy(),
-                        ConditionalSub("b"), ConditionalIns("b"),
-                        ConditionalSub("a"), ConditionalIns("a")]
+        expected_i2w = [
+            BeginOfSequence(),
+            EndOfSequence(),
+            ConditionalDel(),
+            ConditionalCopy(),
+            ConditionalSub("b"),
+            ConditionalIns("b"),
+            ConditionalSub("a"),
+            ConditionalIns("a"),
+        ]
         self.assertListEqual(expected_i2w, vocabulary1.actions.i2w)
 
     def test_vocabularies_encode_unseen_input(self):
@@ -80,16 +108,24 @@ class VocabularyTests(unittest.TestCase):
 
     def test_vocabularies_encode_unseen_actions(self):
         encoded_action = self.vocabularies.encode_unseen_action(
-            ConditionalIns("b"))
+            ConditionalIns("b")
+        )
         self.assertEqual(5, encoded_action)
-        self.assertRaises(KeyError, self.vocabularies.encode_unseen_action,
-                          ConditionalIns("Q"))
+        self.assertRaises(
+            KeyError,
+            self.vocabularies.encode_unseen_action,
+            ConditionalIns("Q"),
+        )
 
     def test_vocabularies_decode_actions(self):
         decoded_actions = [
-            self.vocabularies.decode_action(i) for i in (0, 3, 4)]
-        expected_actions = [BeginOfSequence(), ConditionalCopy(),
-                            ConditionalSub("b")]
+            self.vocabularies.decode_action(i) for i in (0, 3, 4)
+        ]
+        expected_actions = [
+            BeginOfSequence(),
+            ConditionalCopy(),
+            ConditionalSub("b"),
+        ]
         self.assertListEqual(expected_actions, decoded_actions)
         self.assertRaises(IndexError, self.vocabularies.decode_action, 10)
 

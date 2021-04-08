@@ -5,12 +5,15 @@ import editdistance
 import numpy as np
 
 from trans import optimal_expert
-from trans.actions import ConditionalCopy, ConditionalDel, ConditionalIns, \
-    EndOfSequence
+from trans.actions import (
+    ConditionalCopy,
+    ConditionalDel,
+    ConditionalIns,
+    EndOfSequence,
+)
 
 
 class TestOptimalExpert(unittest.TestCase):
-
     def setUp(self) -> None:
 
         self.optimal_expert = optimal_expert.OptimalExpert()
@@ -19,58 +22,59 @@ class TestOptimalExpert(unittest.TestCase):
         x = "wal"
         y = "walked"
         ed = optimal_expert.levenshtein_distance(x, y)[-1, -1]
-        self.assertEqual(
-            ed,
-            editdistance.eval(x, y)
-        )
+        self.assertEqual(ed, editdistance.eval(x, y))
 
     def test_prefix_matrix(self):
         x = "wad"
         y = "walked"
         prefix_matrix = optimal_expert.levenshtein_distance(x, y)
         expected_prefix_matrix = np.array(
-            [[0, 1, 2, 3, 4, 5, 6],
-             [1, 0, 1, 2, 3, 4, 5],
-             [2, 1, 0, 1, 2, 3, 4],
-             [3, 2, 1, 1, 2, 3, 3]],
-            dtype=np.float_
+            [
+                [0, 1, 2, 3, 4, 5, 6],
+                [1, 0, 1, 2, 3, 4, 5],
+                [2, 1, 0, 1, 2, 3, 4],
+                [3, 2, 1, 1, 2, 3, 3],
+            ],
+            dtype=np.float_,
         )
-        self.assertTrue(np.allclose(
-            expected_prefix_matrix,
-            prefix_matrix
-        ))
+        self.assertTrue(np.allclose(expected_prefix_matrix, prefix_matrix))
 
     def test_x_offset(self):
         x = "lk"
         y = "lked"
         delete_cost = optimal_expert.action_sequence_cost(
-            x, y, x_offset=1, y_offset=0)
+            x, y, x_offset=1, y_offset=0
+        )
         self.assertEqual(3, delete_cost)
 
         x = "lk"
         y = "ked"
         delete_cost = optimal_expert.action_sequence_cost(
-            x, y, x_offset=1, y_offset=0)
+            x, y, x_offset=1, y_offset=0
+        )
         self.assertEqual(2, delete_cost)
 
     def test_y_offset(self):
         x = "lk"
         y = "lked"
         insert_cost = optimal_expert.action_sequence_cost(
-            x, y, x_offset=0, y_offset=1)
+            x, y, x_offset=0, y_offset=1
+        )
         self.assertEqual(3, insert_cost)
 
         x = "lk"
         y = "ked"
         insert_cost = optimal_expert.action_sequence_cost(
-            x, y, x_offset=0, y_offset=1)
+            x, y, x_offset=0, y_offset=1
+        )
         self.assertEqual(4, insert_cost)
 
     def test_both_offsets(self):
         x = "lk"
         y = "lked"
         insert_cost = optimal_expert.action_sequence_cost(
-            x, y, x_offset=1, y_offset=1)
+            x, y, x_offset=1, y_offset=1
+        )
         self.assertEqual(2, insert_cost)
 
     def test_find_prefixes(self):
@@ -104,16 +108,18 @@ class TestOptimalExpert(unittest.TestCase):
         y = "wad"
         t = "walked"
         prefixes = self.optimal_expert.find_prefixes(y, t)
-        valid_actions = self.optimal_expert.find_valid_actions(x, 2, y, prefixes)
+        valid_actions = self.optimal_expert.find_valid_actions(
+            x, 2, y, prefixes
+        )
         expected_valid_actions = [
             optimal_expert.ActionsPrefix(
                 {ConditionalCopy(), ConditionalDel(), ConditionalIns("l")},
-                optimal_expert.Prefix(y, t, 2)
+                optimal_expert.Prefix(y, t, 2),
             ),
             optimal_expert.ActionsPrefix(
                 {ConditionalDel(), ConditionalIns("k")},
-                optimal_expert.Prefix(y, t, 3)
-            )
+                optimal_expert.Prefix(y, t, 3),
+            ),
         ]
         self.assertEqual(expected_valid_actions, valid_actions)
 
@@ -123,11 +129,16 @@ class TestOptimalExpert(unittest.TestCase):
         y = "wad"
         t = "walked"
         prefixes = self.optimal_expert.find_prefixes(y, t)
-        valid_actions = self.optimal_expert.find_valid_actions(x, i, y, prefixes)
+        valid_actions = self.optimal_expert.find_valid_actions(
+            x, i, y, prefixes
+        )
         action_scores = self.optimal_expert.roll_out(x, t, i, valid_actions)
         expected_action_scores = {
-            ConditionalCopy(): 2, ConditionalDel(): 3, ConditionalIns("l"): 4,
-            ConditionalIns("k"): 5}
+            ConditionalCopy(): 2,
+            ConditionalDel(): 3,
+            ConditionalIns("l"): 4,
+            ConditionalIns("k"): 5,
+        }
         self.assertEqual(expected_action_scores, action_scores)
 
     def test_score_end(self):
@@ -167,5 +178,5 @@ class TestOptimalExpert(unittest.TestCase):
         self.assertEqual(expected_action_scores, action_scores)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     TestOptimalExpert().run()

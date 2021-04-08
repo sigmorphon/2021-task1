@@ -10,14 +10,15 @@ from trans.actions import Copy, Del, Ins, Sub, EndOfSequence
 
 
 class OptimalSubstitutionExpertTests(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls) -> None:
         aligner = optimal_expert_substitutions.NoSubstitutionAligner()
-        cls.optimal_expert = \
+        cls.optimal_expert = (
             optimal_expert_substitutions.OptimalSubstitutionExpert(aligner)
-        cls.test_fre = os.path.join(os.path.dirname(__file__),
-                                    "test_data/fre_train.tsv")
+        )
+        cls.test_fre = os.path.join(
+            os.path.dirname(__file__), "test_data/fre_train.tsv"
+        )
 
     def test_score_end(self):
         x = "walk"
@@ -58,15 +59,21 @@ class OptimalSubstitutionExpertTests(unittest.TestCase):
     def test_sed_aligner(self):
 
         input_lines = [
-            "abba\tabba", "bababa\tbababa", "bba\tbba",
-            "bbbb\tbbb", "bbbbb\tbbbb"
+            "abba\tabba",
+            "bababa\tbababa",
+            "bba\tbba",
+            "bbbb\tbbb",
+            "bbbbb\tbbbb",
         ]
 
         # learns to copy even when not initialized with copy bias
         input_data = map(to_sample, input_lines)
         aligner = sed.StochasticEditDistance.fit_from_data(
-            input_data, em_iterations=5)
-        expert = optimal_expert_substitutions.OptimalSubstitutionExpert(aligner)
+            input_data, em_iterations=5
+        )
+        expert = optimal_expert_substitutions.OptimalSubstitutionExpert(
+            aligner
+        )
 
         x = ""
         i = 0
@@ -90,8 +97,11 @@ class OptimalSubstitutionExpertTests(unittest.TestCase):
                 pass
 
         aligner = sed.StochasticEditDistance.fit_from_data(
-            input_lines, em_iterations=1)
-        expert = optimal_expert_substitutions.OptimalSubstitutionExpert(aligner)
+            input_lines, em_iterations=1
+        )
+        expert = optimal_expert_substitutions.OptimalSubstitutionExpert(
+            aligner
+        )
 
         x = "abject"
         t = "a b ʒ ɛ k t"
@@ -99,8 +109,13 @@ class OptimalSubstitutionExpertTests(unittest.TestCase):
         y = "a b ʒ e"
 
         optimal_actions = iter(
-            (Sub(old='e', new=' '), Sub(old='c', new='k'), Ins(new=' '),
-             Copy(old='t', new='t'), EndOfSequence())
+            (
+                Sub(old="e", new=" "),
+                Sub(old="c", new="k"),
+                Ins(new=" "),
+                Copy(old="t", new="t"),
+                EndOfSequence(),
+            )
         )
 
         while True:

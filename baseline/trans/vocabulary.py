@@ -2,8 +2,14 @@
 from typing import Any, List, Iterable, Optional
 import pickle
 
-from trans.actions import BeginOfSequence, ConditionalCopy, ConditionalDel, \
-    ConditionalIns, ConditionalSub, EndOfSequence
+from trans.actions import (
+    BeginOfSequence,
+    ConditionalCopy,
+    ConditionalDel,
+    ConditionalIns,
+    ConditionalSub,
+    EndOfSequence,
+)
 
 
 UNK_CHAR = "<UNK>"
@@ -41,24 +47,31 @@ class Vocabulary:
         return f"Vocabulary({str(self.w2i)})"
 
     def to_i2w(self):
-        return self.i2w[len(self.EXTRAS):]
+        return self.i2w[len(self.EXTRAS) :]
 
 
 class ActionVocabulary(Vocabulary):
-    EXTRAS = BeginOfSequence(), EndOfSequence(), ConditionalDel(), ConditionalCopy()
+    EXTRAS = (
+        BeginOfSequence(),
+        EndOfSequence(),
+        ConditionalDel(),
+        ConditionalCopy(),
+    )
 
     def lookup(self, word: Any) -> int:
         return self.w2i[word]  # N.B. no UNK
 
     @property
     def substitutions(self):
-        return [i for i, a in enumerate(self.i2w) if
-                isinstance(a, ConditionalSub)]
+        return [
+            i for i, a in enumerate(self.i2w) if isinstance(a, ConditionalSub)
+        ]
 
     @property
     def insertions(self):
-        return [i for i, a in enumerate(self.i2w) if
-                isinstance(a, ConditionalIns)]
+        return [
+            i for i, a in enumerate(self.i2w) if isinstance(a, ConditionalIns)
+        ]
 
 
 BEGIN_WORD = Vocabulary.EXTRAS.index(BeginOfSequence())
@@ -71,8 +84,11 @@ COPY = ActionVocabulary.EXTRAS.index(ConditionalCopy())
 class Vocabularies:
     """Holds encodings of input characters and edit actions."""
 
-    def __init__(self, characters: Optional[Iterable[str]] = None,
-                 actions: Optional[Iterable[Any]] = None):
+    def __init__(
+        self,
+        characters: Optional[Iterable[str]] = None,
+        actions: Optional[Iterable[Any]] = None,
+    ):
         self.characters = Vocabulary(characters)
         self.actions = ActionVocabulary(actions)
         self.target_characters = set()
@@ -108,8 +124,10 @@ class Vocabularies:
         return self.actions.decode(encoded_action)
 
     def persist(self, filename: str):
-        vocabularies = {"characters": self.characters.to_i2w(),
-                        "actions": self.actions.to_i2w()}
+        vocabularies = {
+            "characters": self.characters.to_i2w(),
+            "actions": self.actions.to_i2w(),
+        }
         with open(filename, mode="wb") as w:
             pickle.dump(vocabularies, w)
 

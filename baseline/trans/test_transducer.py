@@ -9,15 +9,20 @@ from scipy.special import log_softmax
 from trans import optimal_expert
 from trans import transducer
 from trans import vocabulary
-from trans.actions import Copy, ConditionalCopy, ConditionalDel, \
-    ConditionalIns, ConditionalSub, Sub
+from trans.actions import (
+    Copy,
+    ConditionalCopy,
+    ConditionalDel,
+    ConditionalIns,
+    ConditionalSub,
+    Sub,
+)
 
 
 np.random.seed(1)
 
 
 class TransducerTests(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls) -> None:
 
@@ -27,7 +32,8 @@ class TransducerTests(unittest.TestCase):
         vocabulary_.encode_actions("bar")
         expert = optimal_expert.OptimalExpert()
         cls.transducer = transducer.Transducer(
-            model, vocabulary_, expert, 3, 3, 3, 1, 3, 1)
+            model, vocabulary_, expert, 3, 3, 3, 1, 3, 1
+        )
 
     def test_sample(self):
         log_probs = log_softmax([5, 4, 10, 1])
@@ -41,16 +47,19 @@ class TransducerTests(unittest.TestCase):
         self.assertTrue(ConditionalCopy not in valid_actions)
 
     def test_remap_actions(self):
-        action_scores = {Copy("w", "w"): 7., Sub("w", "v"): 5.}
-        expected = {ConditionalCopy(): 7., ConditionalSub("v"): 5.}
+        action_scores = {Copy("w", "w"): 7.0, Sub("w", "v"): 5.0}
+        expected = {ConditionalCopy(): 7.0, ConditionalSub("v"): 5.0}
         remapped = self.transducer.remap_actions(action_scores)
         self.assertDictEqual(expected, remapped)
 
     def test_expert_rollout(self):
         optimal_actions = self.transducer.expert_rollout(
-            input_="foo", target="bar", alignment=1, prediction=["b", "a"])
-        expected = {self.transducer.vocab.encode_unseen_action(a)
-                    for a in (ConditionalIns("r"), ConditionalDel())}
+            input_="foo", target="bar", alignment=1, prediction=["b", "a"]
+        )
+        expected = {
+            self.transducer.vocab.encode_unseen_action(a)
+            for a in (ConditionalIns("r"), ConditionalDel())
+        }
         self.assertSetEqual(expected, set(optimal_actions))
 
 

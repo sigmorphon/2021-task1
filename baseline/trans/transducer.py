@@ -9,8 +9,15 @@ import numpy as np
 
 from trans import optimal_expert
 from trans import vocabulary
-from trans.actions import ConditionalCopy, ConditionalDel, ConditionalIns, \
-    ConditionalSub, Edit, EndOfSequence, GenerativeEdit
+from trans.actions import (
+    ConditionalCopy,
+    ConditionalDel,
+    ConditionalIns,
+    ConditionalSub,
+    Edit,
+    EndOfSequence,
+    GenerativeEdit,
+)
 from trans.vocabulary import BEGIN_WORD, COPY, DELETE, END_WORD
 
 
@@ -57,10 +64,19 @@ class Expansion:
 
 
 class Transducer:
-    def __init__(self, model, vocab: vocabulary.Vocabularies,
-                 expert: optimal_expert.Expert, char_dim: int, action_dim: int,
-                 enc_hidden_dim: int, enc_layers: int, dec_hidden_dim: int,
-                 dec_layers: int, **kwargs):
+    def __init__(
+        self,
+        model,
+        vocab: vocabulary.Vocabularies,
+        expert: optimal_expert.Expert,
+        char_dim: int,
+        action_dim: int,
+        enc_hidden_dim: int,
+        enc_layers: int,
+        dec_hidden_dim: int,
+        dec_layers: int,
+        **kwargs,
+    ):
 
         self.vocab = vocab
         self.optimal_expert = expert
@@ -73,17 +89,20 @@ class Transducer:
 
         # encoder
         self.char_lookup = model.add_lookup_parameters(
-            (self.number_characters, char_dim))
+            (self.number_characters, char_dim)
+        )
 
         self.fenc = lstm(enc_layers, char_dim, enc_hidden_dim, model)
         self.benc = lstm(enc_layers, char_dim, enc_hidden_dim, model)
 
         # decoder
         self.act_lookup = model.add_lookup_parameters(
-            (self.number_actions, action_dim))
+            (self.number_actions, action_dim)
+        )
 
-        self.dec = lstm(dec_layers, enc_hidden_dim * 2 + action_dim,
-                        dec_hidden_dim, model)
+        self.dec = lstm(
+            dec_layers, enc_hidden_dim * 2 + action_dim, dec_hidden_dim, model
+        )
 
         # classifier
         self.pW = model.add_parameters((self.number_actions, dec_hidden_dim))
@@ -95,10 +114,13 @@ class Transducer:
             emb = [self.char_lookup[i] for i in input_]
         else:
             # UNK is the average of trained embeddings (excluding UNK)
-            unk = dy.average([
-                self.char_lookup[i] for i in range(1, self.number_characters)])
-            emb = [self.char_lookup[i]
-                   if i < self.number_characters else unk for i in input_]
+            unk = dy.average(
+                [self.char_lookup[i] for i in range(1, self.number_characters)]
+            )
+            emb = [
+                self.char_lookup[i] if i < self.number_characters else unk
+                for i in input_
+            ]
         return emb
 
     def bidirectional_encoding(self, embeddings: List[dy.Expression]):
@@ -107,8 +129,10 @@ class Transducer:
         b_init = self.benc.initial_state()
         f_states = f_init.add_inputs(embeddings)
         b_states = reversed(b_init.add_inputs(reversed(embeddings)))
-        return [dy.concatenate([fs.output(), bs.output()])
-                for fs, bs in zip(f_states, b_states)]
+        return [
+            dy.concatenate([fs.output(), bs.output()])
+            for fs, bs in zip(f_states, b_states)
+        ]
 
     def compute_valid_actions(self, length_encoder_suffix: int) -> List[int]:
         valid_actions = [END_WORD]
@@ -139,13 +163,16 @@ class Transducer:
             elif isinstance(action, Edit):
                 remapped_action = action
             else:
-                raise ValueError(f"Unknown action: {action, score}.\n"
-                                 f"action_scores: {action_scores}")
+                raise ValueError(
+                    f"Unknown action: {action, score}.\n"
+                    f"action_scores: {action_scores}"
+                )
             remapped_action_scores[remapped_action] = score
         return remapped_action_scores
 
-    def expert_rollout(self, input_: str, target: str, alignment: int,
-                       prediction: List[str]) -> List[int]:
+    def expert_rollout(
+        self, input_: str, target: str, alignment: int, prediction: List[str]
+    ) -> List[int]:
         """Rolls out wit;h optimal expert policy.
 
         Args:
@@ -157,29 +184,41 @@ class Transducer:
         Returns:
             List of optimal actions as integer codes."""
         raw_action_scores = self.optimal_expert.score(
-            input_, target, alignment, prediction)
+            input_, target, alignment, prediction
+        )
         action_scores = self.remap_actions(raw_action_scores)
 
         optimal_value = min(action_scores.values())
-        return [self.vocab.encode_unseen_action(action)
-                for action, value in action_scores.items()
-                if value == optimal_value]
+        return [
+            self.vocab.encode_unseen_action(action)
+            for action, value in action_scores.items()
+            if value == optimal_value
+        ]
 
-    def log_sum_softmax_loss(self, optimal_actions: List[int],
-                             logits: dy.Expression,
-                             valid_actions: List[int]) -> dy.Expression:
+    def log_sum_softmax_loss(
+        self,
+        optimal_actions: List[int],
+        logits: dy.Expression,
+        valid_actions: List[int],
+    ) -> dy.Expression:
         """Compute log loss similar to Riezler et al 2000."""
         log_validity = np.full(self.number_actions, -np.inf)  # invalid
-        log_validity[valid_actions] = 0.
+        log_validity[valid_actions] = 0.0
         logits += dy.inputVector(log_validity)
         log_sum_selected_terms = dy.logsumexp(
-            [dy.pick(logits, index=e) for e in optimal_actions])
+            [dy.pick(logits, index=e) for e in optimal_actions]
+        )
         normalization_term = dy.logsumexp(list(logits))
         return log_sum_selected_terms - normalization_term
 
-    def transduce(self, input_: str, encoded_input: List[int],
-                  target: Optional[str] = None, rollin: Optional[float] = None,
-                  external_cg: bool = True):
+    def transduce(
+        self,
+        input_: str,
+        encoded_input: List[int],
+        target: Optional[str] = None,
+        rollin: Optional[float] = None,
+        external_cg: bool = True,
+    ):
         """Runs the transducer for dynamic-oracle training and greedy decoding.
 
         Args:
@@ -194,8 +233,9 @@ class Transducer:
 
         is_training = bool(target)
         input_emb = self.input_embedding(encoded_input, is_training)
-        bidirectional_emb = \
-            self.bidirectional_encoding(input_emb)[1:]  # drop BEGIN_WORD
+        bidirectional_emb = self.bidirectional_encoding(input_emb)[
+            1:
+        ]  # drop BEGIN_WORD
         input_length = len(bidirectional_emb)
         decoder = self.dec.initial_state()
 
@@ -203,7 +243,7 @@ class Transducer:
         action_history: List[int] = [BEGIN_WORD]
         output: List[str] = []
         losses: List[dy.Expression] = []
-        log_p = 0.
+        log_p = 0.0
 
         while len(action_history) <= MAX_ACTION_SEQ_LEN:
 
@@ -213,7 +253,8 @@ class Transducer:
             input_char_embedding = bidirectional_emb[alignment]
             previous_action_embedding = self.act_lookup[action_history[-1]]
             decoder_input = dy.concatenate(
-                [input_char_embedding, previous_action_embedding])
+                [input_char_embedding, previous_action_embedding]
+            )
             decoder = decoder.add_input(decoder_input)
 
             decoder_output = decoder.output()
@@ -230,10 +271,12 @@ class Transducer:
 
                 # 1. ACTIONS TO MAXIMIZE
                 optim_actions = self.expert_rollout(
-                    input_, target, alignment, output)
+                    input_, target, alignment, output
+                )
 
                 loss = self.log_sum_softmax_loss(
-                    optim_actions, logits, valid_actions)
+                    optim_actions, logits, valid_actions
+                )
 
                 # 2. ACTION SPACE EXPLORATION: NEXT ACTION
                 if np.random.rand() <= rollin:
@@ -244,7 +287,9 @@ class Transducer:
                     # reinforce model beliefs by picking highest probability
                     # action that is consistent with oracle
                     action = optim_actions[
-                        int(np.argmax([log_probs_np[a] for a in optim_actions]))
+                        int(
+                            np.argmax([log_probs_np[a] for a in optim_actions])
+                        )
                     ]
                 losses.append(loss)
 
@@ -271,29 +316,40 @@ class Transducer:
 
         return Output(action_history, "".join(output), log_p, losses)
 
-    def beam_search_decode(self, input_: str, encoded_input: List[int],
-                           beam_width: int, external_cg: bool = True):
+    def beam_search_decode(
+        self,
+        input_: str,
+        encoded_input: List[int],
+        beam_width: int,
+        external_cg: bool = True,
+    ):
 
         if not external_cg:
             dy.renew_cg()
 
         input_emb = self.input_embedding(encoded_input, is_training=False)
-        bidirectional_emb = \
-            self.bidirectional_encoding(input_emb)[1:]  # drop BEGIN_WORD
+        bidirectional_emb = self.bidirectional_encoding(input_emb)[
+            1:
+        ]  # drop BEGIN_WORD
         input_length = len(bidirectional_emb)
         decoder = self.dec.initial_state()
 
         beam: List[Hypothesis] = [
-            Hypothesis(action_history=[BEGIN_WORD],
-                       alignment=0,
-                       decoder=decoder,
-                       negative_log_p=0.,
-                       output=[])]
+            Hypothesis(
+                action_history=[BEGIN_WORD],
+                alignment=0,
+                decoder=decoder,
+                negative_log_p=0.0,
+                output=[],
+            )
+        ]
 
         hypothesis_length = 0
         complete_hypotheses = []
 
-        while beam and beam_width > 0 and hypothesis_length <= MAX_ACTION_SEQ_LEN:
+        while (
+            beam and beam_width > 0 and hypothesis_length <= MAX_ACTION_SEQ_LEN
+        ):
 
             expansions: List[Hypothesis] = []
 
@@ -301,12 +357,15 @@ class Transducer:
 
                 length_encoder_suffix = input_length - hypothesis.alignment
                 valid_actions = self.compute_valid_actions(
-                    length_encoder_suffix)
+                    length_encoder_suffix
+                )
                 # decoder
-                decoder_input = dy.concatenate([
-                    bidirectional_emb[hypothesis.alignment],
-                    self.act_lookup[hypothesis.action_history[-1]]
-                ])
+                decoder_input = dy.concatenate(
+                    [
+                        bidirectional_emb[hypothesis.alignment],
+                        self.act_lookup[hypothesis.action_history[-1]],
+                    ]
+                )
                 decoder = hypothesis.decoder.add_input(decoder_input)
                 # classifier
                 logits = self.pW * decoder.output() + self.pb
@@ -315,12 +374,14 @@ class Transducer:
 
                 for action in valid_actions:
 
-                    log_p = hypothesis.negative_log_p - \
-                            log_probs[action]  # min heap, so minus
+                    log_p = (
+                        hypothesis.negative_log_p - log_probs[action]
+                    )  # min heap, so minus
 
-                    heapq.heappush(expansions,
-                                   Expansion(action, decoder,
-                                             hypothesis, log_p))
+                    heapq.heappush(
+                        expansions,
+                        Expansion(action, decoder, hypothesis, log_p),
+                    )
 
             beam: List[Hypothesis] = []
 
@@ -341,7 +402,8 @@ class Transducer:
                     complete_hypothesis = Output(
                         action_history=action_history,
                         output="".join(output),
-                        log_p=-expansion.negative_log_p)  # undo min heap minus
+                        log_p=-expansion.negative_log_p,
+                    )  # undo min heap minus
 
                     complete_hypotheses.append(complete_hypothesis)
                     beam_width -= 1
@@ -368,7 +430,8 @@ class Transducer:
                         alignment=alignment,
                         decoder=expansion.decoder,
                         negative_log_p=expansion.negative_log_p,
-                        output=output)
+                        output=output,
+                    )
 
                     beam.append(hypothesis)
 
@@ -381,7 +444,8 @@ class Transducer:
                 complete_hypothesis = Output(
                     action_history=hypothesis.action_history,
                     output="".join(hypothesis.output),
-                    log_p=-hypothesis.negative_log_p)  # undo min heap minus
+                    log_p=-hypothesis.negative_log_p,
+                )  # undo min heap minus
 
                 complete_hypotheses.append(complete_hypothesis)
 

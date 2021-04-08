@@ -9,19 +9,22 @@ from trans.actions import Copy, Del, Edit, EndOfSequence, Ins, Sub
 
 
 class EditDistanceAligner(actions.Aligner):
-
-    def __init__(self, del_cost=1., ins_cost=1., sub_cost=1.):
+    def __init__(self, del_cost=1.0, ins_cost=1.0, sub_cost=1.0):
         self.del_cost = del_cost
         self.ins_cost = ins_cost
         self.sub_cost = sub_cost
 
-    def action_sequence_cost(self, x: Sequence[Any], y: Sequence[Any],
-                             x_offset: int, y_offset: int) -> float:
+    def action_sequence_cost(
+        self, x: Sequence[Any], y: Sequence[Any], x_offset: int, y_offset: int
+    ) -> float:
         ed = optimal_expert.edit_distance(
-            x, y,
-            del_cost=self.del_cost, ins_cost=self.ins_cost,
+            x,
+            y,
+            del_cost=self.del_cost,
+            ins_cost=self.ins_cost,
             sub_cost=self.sub_cost,
-            x_offset=x_offset, y_offset=y_offset
+            x_offset=x_offset,
+            y_offset=y_offset,
         )
         return ed[-1, -1]
 
@@ -38,9 +41,8 @@ class EditDistanceAligner(actions.Aligner):
 
 
 class NoSubstitutionAligner(EditDistanceAligner):
-
     def __init__(self):
-        super().__init__(del_cost=1., ins_cost=1., sub_cost=1.)
+        super().__init__(del_cost=1.0, ins_cost=1.0, sub_cost=1.0)
 
     def action_cost(self, action: Edit):
         if isinstance(action, Sub):
@@ -49,14 +51,19 @@ class NoSubstitutionAligner(EditDistanceAligner):
 
 
 class OptimalSubstitutionExpert(optimal_expert.OptimalExpert):
-
-    def __init__(self, aligner: actions.Aligner,
-                 maximum_output_length: int = 150):
+    def __init__(
+        self, aligner: actions.Aligner, maximum_output_length: int = 150
+    ):
         super().__init__(maximum_output_length)
         self.aligner = aligner
 
-    def find_valid_actions(self, x: Sequence[Any], i: int, y: Sequence[Any],
-                           prefixes: Iterable[optimal_expert.Prefix]):
+    def find_valid_actions(
+        self,
+        x: Sequence[Any],
+        i: int,
+        y: Sequence[Any],
+        prefixes: Iterable[optimal_expert.Prefix],
+    ):
         if len(y) >= self.maximum_output_length:
             return {EndOfSequence()}
         input_not_empty = i < len(x)
@@ -73,14 +80,23 @@ class OptimalSubstitutionExpert(optimal_expert.OptimalExpert):
                     if prefix_insert == attention:
                         valid_actions.add(Copy(attention, prefix_insert))
                     else:
-                        valid_actions.add(Sub(old=attention, new=prefix_insert))
+                        valid_actions.add(
+                            Sub(old=attention, new=prefix_insert)
+                        )
                 valid_actions.add(Del(attention))
-            actions_prefix = optimal_expert.ActionsPrefix(valid_actions, prefix)
+            actions_prefix = optimal_expert.ActionsPrefix(
+                valid_actions, prefix
+            )
             actions_prefixes.append(actions_prefix)
         return actions_prefixes
 
-    def roll_out(self, x: Sequence[Any], t: Sequence[Any], i: int,
-                 actions_prefixes: Iterable[optimal_expert.ActionsPrefix]):
+    def roll_out(
+        self,
+        x: Sequence[Any],
+        t: Sequence[Any],
+        i: int,
+        actions_prefixes: Iterable[optimal_expert.ActionsPrefix],
+    ):
         costs_to_go = dict()
         for actions_prefix in actions_prefixes:
             suffix_begin = actions_prefix.prefix.j
@@ -100,7 +116,8 @@ class OptimalSubstitutionExpert(optimal_expert.OptimalExpert):
                 else:
                     raise ValueError(f"Unknown action: {action}")
                 sequence_cost = self.aligner.action_sequence_cost(
-                    x, t, x_offset, t_offset)
+                    x, t, x_offset, t_offset
+                )
                 action_cost = self.aligner.action_cost(action)
                 cost = action_cost + sequence_cost
                 if action not in costs_to_go or costs_to_go[action] > cost:

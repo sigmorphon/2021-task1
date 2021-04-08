@@ -23,15 +23,17 @@ from trans import vocabulary
 random.seed(1)
 
 
-def decode(transducer_: transducer.Transducer, data: List[utils.Sample],
-           beam_width: int = 1) -> utils.DecodingOutput:
+def decode(
+    transducer_: transducer.Transducer,
+    data: List[utils.Sample],
+    beam_width: int = 1,
+) -> utils.DecodingOutput:
     if beam_width == 1:
-        decoding = lambda s: \
-            transducer_.transduce(s.input, s.encoded_input)
+        decoding = lambda s: transducer_.transduce(s.input, s.encoded_input)
     else:
-        decoding = lambda s: \
-            transducer_.beam_search_decode(s.input, s.encoded_input,
-                                           beam_width)[0]
+        decoding = lambda s: transducer_.beam_search_decode(
+            s.input, s.encoded_input, beam_width
+        )[0]
     predictions = []
     loss = 0
     correct = 0
@@ -49,9 +51,11 @@ def decode(transducer_: transducer.Transducer, data: List[utils.Sample],
             logging.info("\t\t...%d samples", j)
     logging.info("\t\t...%d samples", j + 1)
 
-    return utils.DecodingOutput(accuracy=correct / len(data),
-                                loss=- loss / len(data),
-                                predictions=predictions)
+    return utils.DecodingOutput(
+        accuracy=correct / len(data),
+        loss=-loss / len(data),
+        predictions=predictions,
+    )
 
 
 def inverse_sigmoid_schedule(k: int):
@@ -83,10 +87,12 @@ def main(args: argparse.Namespace):
             sample = utils.Sample(input_, target, encoded_input)
             training_data.append(sample)
 
-    logging.info("%d actions: %s", len(vocabulary_.actions),
-                 vocabulary_.actions)
-    logging.info("%d chars: %s", len(vocabulary_.characters),
-                 vocabulary_.characters)
+    logging.info(
+        "%d actions: %s", len(vocabulary_.actions), vocabulary_.actions
+    )
+    logging.info(
+        "%d chars: %s", len(vocabulary_.characters), vocabulary_.characters
+    )
     vocabulary_path = os.path.join(args.output, "vocabulary.pkl")
     vocabulary_.persist(vocabulary_path)
     logging.info("Wrote vocabulary to %s.", vocabulary_path)
@@ -111,16 +117,21 @@ def main(args: argparse.Namespace):
 
     sed_parameters_path = os.path.join(args.output, "sed.pkl")
     sed_aligner = sed.StochasticEditDistance.fit_from_data(
-        training_data, em_iterations=args.sed_em_iterations,
-        output_path=sed_parameters_path)
-    expert = optimal_expert_substitutions.OptimalSubstitutionExpert(sed_aligner)
+        training_data,
+        em_iterations=args.sed_em_iterations,
+        output_path=sed_parameters_path,
+    )
+    expert = optimal_expert_substitutions.OptimalSubstitutionExpert(
+        sed_aligner
+    )
 
     model = dy.Model()
     transducer_ = transducer.Transducer(model, vocabulary_, expert, **dargs)
 
     widgets = [progressbar.Bar(">"), " ", progressbar.ETA()]
     train_progress_bar = progressbar.ProgressBar(
-        widgets=widgets, maxval=args.epochs).start()
+        widgets=widgets, maxval=args.epochs
+    ).start()
 
     train_log_path = os.path.join(args.output, "train.log")
     best_model_path = os.path.join(args.output, "best.model")
@@ -134,10 +145,15 @@ def main(args: argparse.Namespace):
     max_patience = args.patience
     batch_size = args.batch_size
 
-    logging.info("Training for a maximum of %d with a maximum patience of %d.",
-                 args.epochs, max_patience)
-    logging.info("Number of train batches: %d.",
-                 math.ceil(len(training_data) / batch_size))
+    logging.info(
+        "Training for a maximum of %d with a maximum patience of %d.",
+        args.epochs,
+        max_patience,
+    )
+    logging.info(
+        "Number of train batches: %d.",
+        math.ceil(len(training_data) / batch_size),
+    )
 
     best_train_accuracy = 0
     best_dev_accuracy = 0
@@ -148,10 +164,12 @@ def main(args: argparse.Namespace):
 
         logging.info("Training...")
         with utils.Timer():
-            train_loss = 0.
+            train_loss = 0.0
             random.shuffle(training_data)
-            batches = [training_data[i:i + batch_size]
-                       for i in range(0, len(training_data), batch_size)]
+            batches = [
+                training_data[i : i + batch_size]
+                for i in range(0, len(training_data), batch_size)
+            ]
             rollin = rollin_schedule(epoch)
             j = 0
             for j, batch in enumerate(batches):
@@ -233,19 +251,33 @@ def main(args: argparse.Namespace):
         evaluations.append((test_data, "test"))
     for data, dataset_name in evaluations:
 
-        logging.info("Evaluating best model on %s data using beam search "
-                     "(beam width %d)...", dataset_name, args.beam_width)
+        logging.info(
+            "Evaluating best model on %s data using beam search "
+            "(beam width %d)...",
+            dataset_name,
+            args.beam_width,
+        )
         with utils.Timer():
             greedy_decoding = decode(transducer_, data)
-        utils.write_results(greedy_decoding.accuracy,
-                            greedy_decoding.predictions, args.output,
-                            args.nfd, dataset_name, dargs=dargs)
+        utils.write_results(
+            greedy_decoding.accuracy,
+            greedy_decoding.predictions,
+            args.output,
+            args.nfd,
+            dataset_name,
+            dargs=dargs,
+        )
         with utils.Timer():
             beam_decoding = decode(transducer_, data, args.beam_width)
-        utils.write_results(beam_decoding.accuracy,
-                            beam_decoding.predictions, args.output,
-                            args.nfd, dataset_name, args.beam_width,
-                            dargs=dargs)
+        utils.write_results(
+            beam_decoding.accuracy,
+            beam_decoding.predictions,
+            args.output,
+            args.nfd,
+            dataset_name,
+            args.beam_width,
+            dargs=dargs,
+        )
 
 
 if __name__ == "__main__":
@@ -253,48 +285,101 @@ if __name__ == "__main__":
     logging.basicConfig(level="INFO", format="%(levelname)s: %(message)s")
 
     parser = argparse.ArgumentParser(
-        description="Train a g2p neural transducer.")
+        description="Train a g2p neural transducer."
+    )
 
-    parser.add_argument("--dynet-seed", type=int, required=True,
-                        help="DyNET random seed.")
-    parser.add_argument("--dynet-mem", type=int, default=1000,
-                        help="Allocate MEM MB to DyNET.")
-    parser.add_argument("--dynet-autobatch", type=int,
-                        help="Perform automatic minibatching.")
-    parser.add_argument("--train", type=str, required=True,
-                        help="Path to train set data.")
-    parser.add_argument("--dev", type=str, required=True,
-                        help="Path to development set data.")
-    parser.add_argument("--test", type=str,
-                        help="Path to development set data.")
-    parser.add_argument("--output", type=str, required=True,
-                        help="Output directory.")
-    parser.add_argument("--nfd", action="store_true",
-                        help="Train on NFD-normalized data. Write out in NFC.")
-    parser.add_argument("--char-dim", type=int, default=100,
-                        help="Character peak_embedding dimension.")
-    parser.add_argument("--action-dim", type=int, default=100,
-                        help="Action peak_embedding dimension.")
-    parser.add_argument("--enc-hidden-dim", type=int, default=200,
-                        help="Encoder LSTM state dimension.")
-    parser.add_argument("--dec-hidden-dim", type=int, default=200,
-                        help="Decoder LSTM state dimension.")
-    parser.add_argument("--enc-layers", type=int, default=1,
-                        help="Number of encoder LSTM layers.")
-    parser.add_argument("--dec-layers", type=int, default=1,
-                        help="Number of decoder LSTM layers.")
-    parser.add_argument("--beam-width", type=int, default=4,
-                        help="Beam width for beam search decoding.")
-    parser.add_argument("--k", type=int, default=1,
-                        help="k for inverse sigmoid rollin schedule.")
-    parser.add_argument("--patience", type=int, default=12,
-                        help="Maximal patience for early stopping.")
-    parser.add_argument("--epochs", type=int, default=60,
-                        help="Maximal number of training epochs.")
-    parser.add_argument("--batch-size", type=str, default=5,
-                        help="Batch size.")
-    parser.add_argument("--sed-em-iterations", type=int, default=10,
-                        help="SED EM iterations.")
+    parser.add_argument(
+        "--dynet-seed", type=int, required=True, help="DyNET random seed."
+    )
+    parser.add_argument(
+        "--dynet-mem", type=int, default=1000, help="Allocate MEM MB to DyNET."
+    )
+    parser.add_argument(
+        "--dynet-autobatch", type=int, help="Perform automatic minibatching."
+    )
+    parser.add_argument(
+        "--train", type=str, required=True, help="Path to train set data."
+    )
+    parser.add_argument(
+        "--dev", type=str, required=True, help="Path to development set data."
+    )
+    parser.add_argument(
+        "--test", type=str, help="Path to development set data."
+    )
+    parser.add_argument(
+        "--output", type=str, required=True, help="Output directory."
+    )
+    parser.add_argument(
+        "--nfd",
+        action="store_true",
+        help="Train on NFD-normalized data. Write out in NFC.",
+    )
+    parser.add_argument(
+        "--char-dim",
+        type=int,
+        default=100,
+        help="Character peak_embedding dimension.",
+    )
+    parser.add_argument(
+        "--action-dim",
+        type=int,
+        default=100,
+        help="Action peak_embedding dimension.",
+    )
+    parser.add_argument(
+        "--enc-hidden-dim",
+        type=int,
+        default=200,
+        help="Encoder LSTM state dimension.",
+    )
+    parser.add_argument(
+        "--dec-hidden-dim",
+        type=int,
+        default=200,
+        help="Decoder LSTM state dimension.",
+    )
+    parser.add_argument(
+        "--enc-layers",
+        type=int,
+        default=1,
+        help="Number of encoder LSTM layers.",
+    )
+    parser.add_argument(
+        "--dec-layers",
+        type=int,
+        default=1,
+        help="Number of decoder LSTM layers.",
+    )
+    parser.add_argument(
+        "--beam-width",
+        type=int,
+        default=4,
+        help="Beam width for beam search decoding.",
+    )
+    parser.add_argument(
+        "--k",
+        type=int,
+        default=1,
+        help="k for inverse sigmoid rollin schedule.",
+    )
+    parser.add_argument(
+        "--patience",
+        type=int,
+        default=12,
+        help="Maximal patience for early stopping.",
+    )
+    parser.add_argument(
+        "--epochs",
+        type=int,
+        default=60,
+        help="Maximal number of training epochs.",
+    )
+    parser.add_argument(
+        "--batch-size", type=str, default=5, help="Batch size."
+    )
+    parser.add_argument(
+        "--sed-em-iterations", type=int, default=10, help="SED EM iterations."
+    )
 
     args = parser.parse_args()
     main(args)
