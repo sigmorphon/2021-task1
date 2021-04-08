@@ -18,7 +18,7 @@ def main(args: argparse.Namespace) -> None:
         else:
             incorrect += 1
     wer = evallib.wer(correct, incorrect)
-    print(f"WER:\t{wer:.2f}")
+    print(f"WER:\t{wer:5.2f}")
 
 
 if __name__ == "__main__":
