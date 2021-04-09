@@ -127,10 +127,38 @@ than NFC, you must convert back before submitting.
 This year's baseline is a ensembled neural transition system based on the
 imitation learning paradigm introduced by Makarov & Clematide (2018). A variant
 of this system (Makarov & Clematide 2020) was the second-best system overall in
-the 2020 shared task (Gorman et al. 2020). Code, predictions, and results for
-the baseline will also be provided.
+the 2020 shared task (Gorman et al. 2020). Code for the baseline library can be
+found in the [`baseline`](baseline) directory. Baseline development set results
+are given below.
 
-**TBD**: Add links to the baseline library.
+|                        |        WER |
+|:-----------------------|-----------:|
+| `eng_us`               |    (tbd)   |
+| **Subtask 1 (high)**   |  **(tbd)** |
+|                        |            |
+| `arm_e`                |    4.60    |
+| `bul`	                 |    8.10    |
+| `dut`                  |    9.80    |
+| `fre`                  |    7.40    |
+| `geo`                  |    0.00    |
+| `hbs_latn`             |   35.00    |
+| `hun`                  |    1.60    |
+| `jpn_hira`             |    6.20    |
+| `kor`                  |   18.00    |
+| `vie_hanoi`            |    1.30    |
+| **Subtask 2 (medium)** |  **9.20**  |
+|                        |            |
+| `ady`                  |   22.00    |
+| `gre`                  |    3.00    |
+| `ice` 	         |   14.00    |
+| `ita`    	         |   25.00    |
+| `khm`                  |   38.00    |
+| `lav`		         |   35.00    |
+| `mlt_latn` 	         |   20.00    |
+| `rum`                  |   10.00    |
+| `slv`                  |   41.00    |
+| `wel_sw`               |   16.00    |
+| **Subtask 3 (low)**    | **22.40**  |
 
 ## Comparison with the 2020 shared task
 
