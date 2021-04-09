@@ -22,9 +22,9 @@ def main(args: argparse.Namespace) -> None:
                 incorrect += 1
         wer = evallib.wer(correct, incorrect)
         wers.append(wer)
-        print(f"{tsv_path} WER:\t{wer:.2f}")
+        print(f"{tsv_path} WER:\t{wer:5.2f}")
     wer = statistics.mean(wers)
-    print(f"Macro-average WER:\t{wer:.2f}")
+    print(f"Macro-average WER:\t{wer:5.2f}")
 
 
 if __name__ == "__main__":
