@@ -197,7 +197,7 @@ In *Proceedings of the 2018 Conference on Empirical Methods in Natural Language
 Processing*, pages 2877-2882.
 
 Makarov, P., and Clematide, S. 2020. [CLUZH at SIGMORPHON 2020 shared task on
-multi-lingual grapheme-to-phoneme
+multilingual grapheme-to-phoneme
 conversion](https://www.aclweb.org/anthology/2020.sigmorphon-1.19/). In
 *Proceedings of the 17th SIGMORPHON Workshopon Computational Research in
 Phonetics, Phonology, and Morphology*, pages 171-176.
