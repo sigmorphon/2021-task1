@@ -12,7 +12,7 @@ from trans import utils
 def read_files(fileobj: TextIO):
     samples = []
     for line in fileobj:
-        input_, prediction = line.rstrip().split("\t", 1)
+        input_, prediction = line.rstrip("\n").split("\t", 1)
         samples.append(utils.Sample(input_, prediction))
     return samples
 
