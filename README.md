@@ -131,10 +131,10 @@ the 2020 shared task (Gorman et al. 2020). Code for the baseline library can be
 found in the [`baseline`](baseline) directory. Baseline development set results
 are given below.
 
-|                        |        WER |
+|                        |  WER (dev) |
 |:-----------------------|-----------:|
-| `eng_us`               |    (tbd)   |
-| **Subtask 1 (high)**   |  **(tbd)** |
+| `eng_us`               |    45.13   |
+| **Subtask 1 (high)**   |  **45.13** |
 |                        |            |
 | `arm_e`                |    4.60    |
 | `bul`	                 |    8.10    |
@@ -150,10 +150,10 @@ are given below.
 |                        |            |
 | `ady`                  |   22.00    |
 | `gre`                  |    3.00    |
-| `ice` 	         |   14.00    |
-| `ita`    	         |   25.00    |
+| `ice`                  |   14.00    |
+| `ita`                  |   25.00    |
 | `khm`                  |   38.00    |
-| `lav`		         |   35.00    |
+| `lav`                  |   35.00    |
 | `mlt_latn` 	         |   20.00    |
 | `rum`                  |   10.00    |
 | `slv`                  |   41.00    |
