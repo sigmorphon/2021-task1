@@ -1,4 +1,5 @@
 """Trains a grapheme-to-phoneme neural transducer."""
+
 from typing import List
 
 import argparse
@@ -18,9 +19,6 @@ from trans import sed
 from trans import transducer
 from trans import utils
 from trans import vocabulary
-
-
-random.seed(1)
 
 
 def decode(
@@ -63,7 +61,8 @@ def inverse_sigmoid_schedule(k: int):
     return lambda epoch: (1 - k / (k + np.exp(epoch / k)))
 
 
-def main(args: argparse.Namespace):
+def main(args: argparse.Namespace) -> None:
+    random.seed(1)
 
     dargs = args.__dict__
     for key, value in dargs.items():
@@ -281,105 +280,97 @@ def main(args: argparse.Namespace):
 
 
 if __name__ == "__main__":
-
     logging.basicConfig(level="INFO", format="%(levelname)s: %(message)s")
-
-    parser = argparse.ArgumentParser(
-        description="Train a g2p neural transducer."
-    )
-
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--dynet-seed", type=int, required=True, help="DyNET random seed."
+        "--dynet-seed", type=int, required=True, help="DyNET random seed"
     )
     parser.add_argument(
-        "--dynet-mem", type=int, default=1000, help="Allocate MEM MB to DyNET."
+        "--dynet-mem",
+        type=int,
+        default=1000,
+        help="megabytes of memory to allocate to DyNET",
     )
     parser.add_argument(
-        "--dynet-autobatch", type=int, help="Perform automatic minibatching."
+        "--dynet-autobatch", type=int, help="perform automatic minibatching"
     )
     parser.add_argument(
-        "--train", type=str, required=True, help="Path to train set data."
+        "--train", required=True, help="path to train set data"
     )
     parser.add_argument(
-        "--dev", type=str, required=True, help="Path to development set data."
+        "--dev", required=True, help="path to development set data"
     )
+    parser.add_argument("--test", help="path to development set data")
     parser.add_argument(
-        "--test", type=str, help="Path to development set data."
-    )
-    parser.add_argument(
-        "--output", type=str, required=True, help="Output directory."
+        "--output", required=True, help="output directory path"
     )
     parser.add_argument(
         "--nfd",
         action="store_true",
-        help="Train on NFD-normalized data. Write out in NFC.",
+        help="use NFD normalization internally (output is still NFC)",
     )
     parser.add_argument(
         "--char-dim",
         type=int,
         default=100,
-        help="Character peak_embedding dimension.",
+        help="character peak_embedding dimension",
     )
     parser.add_argument(
         "--action-dim",
         type=int,
         default=100,
-        help="Action peak_embedding dimension.",
+        help="action peak_embedding dimension",
     )
     parser.add_argument(
         "--enc-hidden-dim",
         type=int,
         default=200,
-        help="Encoder LSTM state dimension.",
+        help="encoder LSTM state dimension",
     )
     parser.add_argument(
         "--dec-hidden-dim",
         type=int,
         default=200,
-        help="Decoder LSTM state dimension.",
+        help="decoder LSTM state dimension",
     )
     parser.add_argument(
         "--enc-layers",
         type=int,
         default=1,
-        help="Number of encoder LSTM layers.",
+        help="number of encoder LSTM layers",
     )
     parser.add_argument(
         "--dec-layers",
         type=int,
         default=1,
-        help="Number of decoder LSTM layers.",
+        help="number of decoder LSTM layers",
     )
     parser.add_argument(
         "--beam-width",
         type=int,
         default=4,
-        help="Beam width for beam search decoding.",
+        help="beam width for beam search decoding",
     )
     parser.add_argument(
         "--k",
         type=int,
         default=1,
-        help="k for inverse sigmoid rollin schedule.",
+        help="inverse sigmoid rollin schedule hyperparameter",
     )
     parser.add_argument(
         "--patience",
         type=int,
         default=12,
-        help="Maximal patience for early stopping.",
+        help="patience for early stopping",
     )
     parser.add_argument(
         "--epochs",
         type=int,
         default=60,
-        help="Maximal number of training epochs.",
+        help="maximum number of training epochs",
     )
+    parser.add_argument("--batch-size", type=int, default=5, help="batch size")
     parser.add_argument(
-        "--batch-size", type=str, default=5, help="Batch size."
+        "--sed-em-iterations", type=int, default=10, help="SED EM iterations"
     )
-    parser.add_argument(
-        "--sed-em-iterations", type=int, default=10, help="SED EM iterations."
-    )
-
-    args = parser.parse_args()
-    main(args)
+    main(parser.parse_args())
