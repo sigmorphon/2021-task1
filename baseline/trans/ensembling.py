@@ -1,4 +1,5 @@
 """Performs majority-vote ensembling over files with predictions."""
+
 from typing import TextIO
 
 import argparse
@@ -78,25 +79,17 @@ def main(args: argparse.Namespace):
 
 
 if __name__ == "__main__":
-
     logging.basicConfig(level="INFO", format="%(levelname)s: %(message)s")
 
-    parser = argparse.ArgumentParser(
-        description="Produce a majority-vote output file."
-    )
-    parser.add_argument(
-        "--gold", type=str, required=True, help="Path to gold data."
-    )
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--gold", required=True, help="path to gold data")
     parser.add_argument(
         "--systems",
-        type=str,
         required=True,
         nargs="+",
-        help="Path to systems' data.",
+        help="path to system data",
     )
     parser.add_argument(
-        "--output", type=str, required=True, help="Output directory."
+        "--output", required=True, help="output directory path"
     )
-
-    args = parser.parse_args()
-    main(args)
+    main(parser.parse_args())
