@@ -128,37 +128,36 @@ This year's baseline is a ensembled neural transition system based on the
 imitation learning paradigm introduced by Makarov & Clematide (2018). A variant
 of this system (Makarov & Clematide 2020) was the second-best system overall in
 the 2020 shared task (Gorman et al. 2020). Code for the baseline library can be
-found in the [`baseline`](baseline) directory. Baseline development set results
-are given below.
+found in the [`baseline`](baseline) directory. Baseline results are given below.
 
-|                        |  WER (dev) |
-|:-----------------------|-----------:|
-| `eng_us`               |    45.13   |
-| **Subtask 1 (high)**   |  **45.13** |
-|                        |            |
-| `arm_e`                |    4.60    |
-| `bul`	                 |    8.10    |
-| `dut`                  |    9.80    |
-| `fre`                  |    7.40    |
-| `geo`                  |    0.00    |
-| `hbs_latn`             |   35.00    |
-| `hun`                  |    1.60    |
-| `jpn_hira`             |    6.20    |
-| `kor`                  |   18.00    |
-| `vie_hanoi`            |    1.30    |
-| **Subtask 2 (medium)** |  **9.20**  |
-|                        |            |
-| `ady`                  |   22.00    |
-| `gre`                  |    3.00    |
-| `ice`                  |   14.00    |
-| `ita`                  |   25.00    |
-| `khm`                  |   38.00    |
-| `lav`                  |   35.00    |
-| `mlt_latn` 	         |   20.00    |
-| `rum`                  |   10.00    |
-| `slv`                  |   41.00    |
-| `wel_sw`               |   16.00    |
-| **Subtask 3 (low)**    | **22.40**  |
+|                        | WER (dev) | WER (test) |
+|:-----------------------|----------:|-----------:|
+| `eng_us`               |   45.13   |    41.94   |
+| **Subtask 1 (high)**   | **45.13** |  **41.94** |
+|                        |           |            |
+| `arm_e`                |    4.50   |     7.00   |
+| `bul`                  |    8.30   |    18.30   |
+| `dut`                  |   10.80   |    14.70   |
+| `fre`                  |    7.40   |     8.50   |
+| `geo`                  |    0.00   |     0.00   |
+| `hbs_latn`             |   34.70   |    32.10   |
+| `hun`                  |    1.50   |     1.80   |
+| `jpn_hira`             |    6.20   |     5.20   |
+| `kor`                  |   18.40   |    16.30   |
+| `vie_hanoi`            |    1.30   |     2.50   |
+| **Subtask 2 (medium)** |  **9.35** |  **10.64** |
+|                        |           |            |
+| `ady`                  |   22.00   |    22.00   |
+| `gre`                  |    5.00   |    21.00   |
+| `ice`                  |   11.00   |    12.00   |
+| `ita`                  |   22.00   |    19.00   |
+| `khm`                  |   34.00   |    34.00   |
+| `lav`                  |   41.00   |    55.00   |
+| `mlt_latn`             |   20.00   |    19.00   |
+| `rum`                  |   10.00   |    10.00   |
+| `slv`                  |   43.00   |    49.00   |
+| `wel_sw`               |   16.00   |    10.00   |  
+| **Subtask 3 (low)**    | **22.40** |  **25.10** |
 
 ## Comparison with the 2020 shared task
 
