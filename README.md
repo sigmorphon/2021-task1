@@ -117,10 +117,10 @@ than NFC, you must convert back before submitting.
 **TBD**: This is currently estimated and may change in the near future.
 
 -   March 24, 2021: Data released.
--   TBD, 2021: Baseline code and results released.
--   May 1, 2021: Participants' submissions due.
--   May 8, 2021: Participants' draft system description papers due.
--   May 15, 2021: Participants' camera-ready system description papers due.
+-   April 8, 2021: Baseline code and results released.
+-   May 8, 2021: Participants' submissions due.
+-   May 15, 2021: Participants' draft system description papers due.
+-   May 22, 2021: Participants' camera-ready system description papers due.
 
 ## Baseline
 
