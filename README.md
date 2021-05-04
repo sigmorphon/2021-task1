@@ -110,11 +110,9 @@ tab-character, tokenized phone sequence) TSV format, the same one used for the
 training and development data.** If you use an internal representation other
 than NFC, you must convert back before submitting.
 
-<a href="mailto:sigmorphon2021task1@gmail.com?&bcc=kylebgorman@gmail.com&subject=SIGMORPHON 2021 Task 1 Submission&body=Team members (...):%0D%0ATeam name (no spaces):%0D%0APlease attach your submission(s). Each submission should be a .tar.gz or .zip file.">Email for submission</a>
+Please use <a href="mailto:sigmorphon2021task1@gmail.com?&bcc=kylebgorman@gmail.com&subject=SIGMORPHON 2021 Task 1 Submission&body=Team members (...):%0D%0ATeam name (no spaces):%0D%0APlease attach your submission(s). Each submission should be a .tar.gz or .zip file.">this email form  </a> to submit your results.
 
 ## Timeline
-
-**TBD**: This is currently estimated and may change in the near future.
 
 -   March 24, 2021: Data released.
 -   April 8, 2021: Baseline code and results released.
