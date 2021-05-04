@@ -5,8 +5,8 @@ of "graphemes"&mdash;characters&mdash;representing a word to a transcription of 
 word's pronunciation. This task is an important part of speech technologies,
 including recognition and synthesis. This is the second iteration of this task.
 
-If you would like to submit to this task, please sign up for the mailing list.
-Sign up [here](https://groups.google.com/u/1/g/sigmorphon-2021-task-1) by
+Please sign up for the mailing list 
+[here](https://groups.google.com/u/1/g/sigmorphon-2021-task-1) by
 clicking the button labeled "Ask to join group".
 
 ## Data
