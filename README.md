@@ -1,13 +1,13 @@
 # Task 1: Second SIGMORPHON Shared Task on Grapheme-to-Phoneme Conversions
 
 In this task, participants will create computational models that map a sequence
-of "graphemes"&mdash;characters&mdash;representing a word to a transcription of that
+of "graphemes"---characters---representing a word to a transcription of that
 word's pronunciation. This task is an important part of speech technologies,
 including recognition and synthesis. This is the second iteration of this task.
 
-If you would like to submit to this task, please sign up for the mailing list.
-Sign up [here](https://groups.google.com/u/1/g/sigmorphon-2021-task-1) by
-clicking the button labeled "Ask to join group".
+Please sign up for the [mailing
+list](https://groups.google.com/u/1/g/sigmorphon-2021-task-1) by clicking the
+button labeled "Ask to join group".
 
 ## Data
 
@@ -21,9 +21,9 @@ filtered and downsampled using proprietary techniques.
 ### Format
 
 Training and development data are UTF-8-encoded tab-separated values files. Each
-example occupies a single line and consists of a grapheme sequence&mdash;a sequence
+example occupies a single line and consists of a grapheme sequence---a sequence
 of [NFC](https://en.wikipedia.org/wiki/Unicode_equivalence#Normal_forms) Unicode
-codepoints&mdash;a tab character, and the corresponding phone sequence, a
+codepoints---a tab character, and the corresponding phone sequence, a
 roughly-phonemic IPA, tokenized using the
 [`segments`](https://github.com/cldf/segments) library. The following shows
 three lines of Romanian data:
@@ -108,13 +108,11 @@ for evaluation:
 **Please submit your results in the two-column (grapheme sequence,
 tab-character, tokenized phone sequence) TSV format, the same one used for the
 training and development data.** If you use an internal representation other
-than NFC, you must convert back before submitting.
-
-**TBD**: Email for submission.
+than NFC, you must convert back before submitting. Each submission should then
+be combined into a `.tar.gz` or `.zip` file and submitted via [this
+form](https://script.google.com/macros/s/AKfycbwiowg_eub_lXBf0LlCDbuIURGZxaNdW4HcTUOvi2h3llEW2nM/exec).
 
 ## Timeline
-
-**TBD**: This is currently estimated and may change in the near future.
 
 -   March 24, 2021: Data released.
 -   April 8, 2021: Baseline code and results released.
@@ -130,34 +128,34 @@ of this system (Makarov & Clematide 2020) was the second-best system overall in
 the 2020 shared task (Gorman et al. 2020). Code for the baseline library can be
 found in the [`baseline`](baseline) directory. Baseline results are given below.
 
-|                        | WER (dev) | WER (test) |
-|:-----------------------|----------:|-----------:|
-| `eng_us`               |   45.13   |    41.94   |
-| **Subtask 1 (high)**   | **45.13** |  **41.94** |
-|                        |           |            |
-| `arm_e`                |    4.50   |     7.00   |
-| `bul`                  |    8.30   |    18.30   |
-| `dut`                  |   10.80   |    14.70   |
-| `fre`                  |    7.40   |     8.50   |
-| `geo`                  |    0.00   |     0.00   |
-| `hbs_latn`             |   34.70   |    32.10   |
-| `hun`                  |    1.50   |     1.80   |
-| `jpn_hira`             |    6.20   |     5.20   |
-| `kor`                  |   18.40   |    16.30   |
-| `vie_hanoi`            |    1.30   |     2.50   |
-| **Subtask 2 (medium)** |  **9.35** |  **10.64** |
-|                        |           |            |
-| `ady`                  |   22.00   |    22.00   |
-| `gre`                  |    5.00   |    21.00   |
-| `ice`                  |   11.00   |    12.00   |
-| `ita`                  |   22.00   |    19.00   |
-| `khm`                  |   34.00   |    34.00   |
-| `lav`                  |   41.00   |    55.00   |
-| `mlt_latn`             |   20.00   |    19.00   |
-| `rum`                  |   10.00   |    10.00   |
-| `slv`                  |   43.00   |    49.00   |
-| `wel_sw`               |   16.00   |    10.00   |  
-| **Subtask 3 (low)**    | **22.40** |  **25.10** |
+                             WER (dev)   WER (test)
+  ------------------------ ----------- ------------
+  `eng_us`                       45.13        41.94
+  **Subtask 1 (high)**       **45.13**    **41.94**
+                                       
+  `arm_e`                         4.50         7.00
+  `bul`                           8.30        18.30
+  `dut`                          10.80        14.70
+  `fre`                           7.40         8.50
+  `geo`                           0.00         0.00
+  `hbs_latn`                     34.70        32.10
+  `hun`                           1.50         1.80
+  `jpn_hira`                      6.20         5.20
+  `kor`                          18.40        16.30
+  `vie_hanoi`                     1.30         2.50
+  **Subtask 2 (medium)**      **9.35**    **10.64**
+                                       
+  `ady`                          22.00        22.00
+  `gre`                           5.00        21.00
+  `ice`                          11.00        12.00
+  `ita`                          22.00        19.00
+  `khm`                          34.00        34.00
+  `lav`                          41.00        55.00
+  `mlt_latn`                     20.00        19.00
+  `rum`                          10.00        10.00
+  `slv`                          43.00        49.00
+  `wel_sw`                       16.00        10.00
+  **Subtask 3 (low)**        **22.40**    **25.10**
 
 ## Comparison with the 2020 shared task
 
