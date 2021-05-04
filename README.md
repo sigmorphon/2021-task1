@@ -1,11 +1,13 @@
 # Task 1: Second SIGMORPHON Shared Task on Grapheme-to-Phoneme Conversions
 
 In this task, participants will create computational models that map a sequence
-of "graphemes"---characters---representing a word to a transcription of that
+of "graphemes"&mdash;characters&mdash;representing a word to a transcription of that
 word's pronunciation. This task is an important part of speech technologies,
 including recognition and synthesis. This is the second iteration of this task.
 
-**TBD**: mailing list sign-up.
+If you would like to submit to this task, please sign up for the mailing list.
+Sign up [here](https://groups.google.com/u/1/g/sigmorphon-2021-task-1) by
+clicking the button labeled "Ask to join group".
 
 ## Data
 
@@ -19,9 +21,9 @@ filtered and downsampled using proprietary techniques.
 ### Format
 
 Training and development data are UTF-8-encoded tab-separated values files. Each
-example occupies a single line and consists of a grapheme sequence---a sequence
+example occupies a single line and consists of a grapheme sequence&mdash;a sequence
 of [NFC](https://en.wikipedia.org/wiki/Unicode_equivalence#Normal_forms) Unicode
-codepoints---a tab character, and the corresponding phone sequence, a
+codepoints&mdash;a tab character, and the corresponding phone sequence, a
 roughly-phonemic IPA, tokenized using the
 [`segments`](https://github.com/cldf/segments) library. The following shows
 three lines of Romanian data:
@@ -32,6 +34,8 @@ three lines of Romanian data:
 
 The provided test data is of a similar format but only has the first column,
 containing grapheme sequences.
+
+[Data for all three subtasks is now available.](data/)
 
 ### Subtasks
 
@@ -112,21 +116,48 @@ than NFC, you must convert back before submitting.
 
 **TBD**: This is currently estimated and may change in the near future.
 
--   March 1, 2021: Data released.
--   March 8, 2021: Baseline code and results released.
--   May 1, 2021: Participants' submissions due.
--   May 8, 2021: Participants' draft system description papers due.
--   May 15, 2021: Participants' camera-ready system description papers due.
+-   March 24, 2021: Data released.
+-   April 8, 2021: Baseline code and results released.
+-   May 8, 2021: Participants' submissions due.
+-   May 15, 2021: Participants' draft system description papers due.
+-   May 22, 2021: Participants' camera-ready system description papers due.
 
 ## Baseline
 
 This year's baseline is a ensembled neural transition system based on the
 imitation learning paradigm introduced by Makarov & Clematide (2018). A variant
 of this system (Makarov & Clematide 2020) was the second-best system overall in
-the 2020 shared task (Gorman et al. 2020). Code, predictions, and results for
-the baseline will also be provided.
+the 2020 shared task (Gorman et al. 2020). Code for the baseline library can be
+found in the [`baseline`](baseline) directory. Baseline results are given below.
 
-**TBD**: Add links to the baseline library.
+|                        | WER (dev) | WER (test) |
+|:-----------------------|----------:|-----------:|
+| `eng_us`               |   45.13   |    41.94   |
+| **Subtask 1 (high)**   | **45.13** |  **41.94** |
+|                        |           |            |
+| `arm_e`                |    4.50   |     7.00   |
+| `bul`                  |    8.30   |    18.30   |
+| `dut`                  |   10.80   |    14.70   |
+| `fre`                  |    7.40   |     8.50   |
+| `geo`                  |    0.00   |     0.00   |
+| `hbs_latn`             |   34.70   |    32.10   |
+| `hun`                  |    1.50   |     1.80   |
+| `jpn_hira`             |    6.20   |     5.20   |
+| `kor`                  |   18.40   |    16.30   |
+| `vie_hanoi`            |    1.30   |     2.50   |
+| **Subtask 2 (medium)** |  **9.35** |  **10.64** |
+|                        |           |            |
+| `ady`                  |   22.00   |    22.00   |
+| `gre`                  |    5.00   |    21.00   |
+| `ice`                  |   11.00   |    12.00   |
+| `ita`                  |   22.00   |    19.00   |
+| `khm`                  |   34.00   |    34.00   |
+| `lav`                  |   41.00   |    55.00   |
+| `mlt_latn`             |   20.00   |    19.00   |
+| `rum`                  |   10.00   |    10.00   |
+| `slv`                  |   43.00   |    49.00   |
+| `wel_sw`               |   16.00   |    10.00   |  
+| **Subtask 3 (low)**    | **22.40** |  **25.10** |
 
 ## Comparison with the 2020 shared task
 
@@ -165,7 +196,7 @@ In *Proceedings of the 2018 Conference on Empirical Methods in Natural Language
 Processing*, pages 2877-2882.
 
 Makarov, P., and Clematide, S. 2020. [CLUZH at SIGMORPHON 2020 shared task on
-multi-lingual grapheme-to-phoneme
+multilingual grapheme-to-phoneme
 conversion](https://www.aclweb.org/anthology/2020.sigmorphon-1.19/). In
 *Proceedings of the 17th SIGMORPHON Workshopon Computational Research in
 Phonetics, Phonology, and Morphology*, pages 171-176.
