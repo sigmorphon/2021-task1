@@ -110,7 +110,7 @@ tab-character, tokenized phone sequence) TSV format, the same one used for the
 training and development data.** If you use an internal representation other
 than NFC, you must convert back before submitting.
 
-**TBD**: Email for submission.
+<a href="mailto:sigmorphon2021task1@gmail.com?&bcc=kylebgorman@gmail.com&subject=SIGMORPHON 2021 Task 1 Submission&body=Team members (...):%0D%0ATeam name (no spaces):%0D%0APlease attach your submission(s). Each submission should be a .tar.gz or .zip file.">Email for submission</a>
 
 ## Timeline
 
