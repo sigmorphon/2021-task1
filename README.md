@@ -5,9 +5,17 @@ of "graphemes"&mdash;characters&mdash;representing a word to a transcription of 
 word's pronunciation. This task is an important part of speech technologies,
 including recognition and synthesis. This is the second iteration of this task.
 
-If you would like to submit to this task, please sign up for the mailing list.
-Sign up [here](https://groups.google.com/u/1/g/sigmorphon-2021-task-1) by
+Please sign up for the mailing list 
+[here](https://groups.google.com/u/1/g/sigmorphon-2021-task-1) by
 clicking the button labeled "Ask to join group".
+
+## Results
+
+The task is now complete. System papers and a summary of the task will appear in
+the SIGMORPHON 2021 proceedings.
+
+* [Preliminary results](https://docs.google.com/spreadsheets/d/1cSbhxbUPFsB72Amv8OzbGcEbs54XOShR5WxC3PNaYTA/edit?usp=sharing)
+* [Submissions](https://drive.google.com/drive/folders/1Fer7UfHBnt5k-WFHsVXQO8ac3BvREAyC)
 
 ## Data
 
@@ -110,17 +118,15 @@ tab-character, tokenized phone sequence) TSV format, the same one used for the
 training and development data.** If you use an internal representation other
 than NFC, you must convert back before submitting.
 
-**TBD**: Email for submission.
+Please use <a href="mailto:sigmorphon2021task1@gmail.com?&bcc=kylebgorman@gmail.com&subject=SIGMORPHON 2021 Task 1 Submission&body=Team members (...):%0D%0ATeam name (no spaces):%0D%0APlease attach your submission(s). Each submission should be a .tar.gz or .zip file.">this email form  </a> to submit your results.
 
 ## Timeline
 
-**TBD**: This is currently estimated and may change in the near future.
-
 -   March 24, 2021: Data released.
--   TBD, 2021: Baseline code and results released.
--   May 1, 2021: Participants' submissions due.
--   May 8, 2021: Participants' draft system description papers due.
--   May 15, 2021: Participants' camera-ready system description papers due.
+-   April 8, 2021: Baseline code and results released.
+-   May 8, 2021: Participants' submissions due.
+-   May 15, 2021: Participants' draft system description papers due.
+-   May 22, 2021: Participants' camera-ready system description papers due.
 
 ## Baseline
 

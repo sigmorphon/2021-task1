@@ -19,6 +19,8 @@ LANGS=""
 train() {
     for LEVEL in low medium high; do
         for TRAIN in "${DATA}/${LEVEL}/"*"_train.tsv"; do
+            DEV="${TRAIN//_train.tsv/_dev.tsv}"
+            TEST="${TRAIN//_train.tsv/_test.tsv}"
             LG="$(basename ${TRAIN} _train.tsv)"
             if [[ ${LANGS} ]] && ! [[ " ${LANGS} " =~ " ${LG} " ]]; then
                 # If we've flagged target languages, we wish to ignore all non-targets.
@@ -81,18 +83,16 @@ evaluate() {
             for SPLIT in dev test; do
                 paste \
                     "${TRAIN//_train.tsv/_${SPLIT}.tsv}" \
-                    "${OUTPUT}/${LEVEL}/${LG}/ensemble/${SPLIT}_${MAX_ENSEMBLE_SIZE}ensemble.predictions" |
-                    cut -f2,4 \
-                        >"${OUTPUT}/${LEVEL}/${LG}/ensemble/${SPLIT}_${MAX_ENSEMBLE_SIZE}ensemble.tsv"
+                    "${OUTPUT}/${LEVEL}/${LG}/ensemble/${SPLIT}_${MAX_ENSEMBLE_SIZE}ensemble.predictions" \
+                    | cut -f2,4 \
+                    > "${OUTPUT}/${LEVEL}/${LG}/ensemble/${SPLIT}_${MAX_ENSEMBLE_SIZE}ensemble.tsv"
             done
         done
     done
-
     # Calls evaluation script.
     for SPLIT in dev test; do
-        echo "Split: ${SPLIT}"
         for LEVEL in low medium high; do
-            echo "Level: ${LEVEL}"
+            echo "${SPLIT} ${LEVEL}:"
             python ${EVALUATION}/./evaluate_all.py \
                 "${OUTPUT}/${LEVEL}/"*"/ensemble/${SPLIT}_${MAX_ENSEMBLE_SIZE}ensemble.tsv"
             echo
@@ -101,6 +101,7 @@ evaluate() {
 }
 
 main() {
+    mkdir -p "${OUTPUT}"
     train
     ensemble
     evaluate
@@ -134,5 +135,4 @@ while getopts "rt:" OPTION; do
     esac
 done
 
-mkdir -p "${OUTPUT}"
 main
