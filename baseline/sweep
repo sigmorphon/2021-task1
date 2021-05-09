@@ -18,21 +18,20 @@ train() {
     for LEVEL in low medium high; do
         for TRAIN in "${DATA}/${LEVEL}/"*"_train.tsv"; do
             DEV="${TRAIN//_train.tsv/_dev.tsv}"
-            # TODO(kbg): Change path to .tsv when test data becomes available.
-            TEST="${TRAIN//_train.tsv/_test.txt}"
+            TEST="${TRAIN//_train.tsv/_test.tsv}"
             LG="$(basename ${TRAIN} _train.tsv)"
             for ENSEMBLE_SIZE in $(seq 1 "${MAX_ENSEMBLE_SIZE}"); do
                 # We apply NFD unicode normalization.
                 python trans/train.py \
-                    --dynet-seed="${ENSEMBLE_SIZE}" \
-                    --train="${TRAIN}" \
-                    --dev="${DEV}" \
-                    --test="${TEST}" \
-                    --sed-em-iterations="${SED_EM_ITERATIONS}" \
-                    --output="${OUTPUT}/${LEVEL}/${LG}/${ENSEMBLE_SIZE}" \
-                    --epochs="${EPOCHS}" \
-                    --beam-width="${BEAM_WIDTH}" \
-                    --patience="${PATIENCE}" \
+                    --dynet-seed "${ENSEMBLE_SIZE}" \
+                    --train "${TRAIN}" \
+                    --dev "${DEV}" \
+                    --test "${TEST}" \
+                    --sed-em-iterations "${SED_EM_ITERATIONS}" \
+                    --output "${OUTPUT}/${LEVEL}/${LG}/${ENSEMBLE_SIZE}" \
+                    --epochs "${EPOCHS}" \
+                    --beam-width "${BEAM_WIDTH}" \
+                    --patience "${PATIENCE}" \
                     --nfd &
             done
             wait
@@ -42,38 +41,45 @@ train() {
 
 ensemble() {
     for LEVEL in low medium high; do
-        # TODO(kbg): Add test ensembles when test data becomes available.
-        for DEV in "${DATA}/${LEVEL}/"*"_dev.tsv"; do
-            LG="$(basename ${DEV} _dev.tsv)"
-            python trans/ensembling.py \
-                --gold="${DATA}/${LEVEL}/${LG}_dev.tsv" \
-                --systems "${OUTPUT}/${LEVEL}/${LG}/"*"/dev_beam${BEAM_WIDTH}.predictions" \
-                --output="${OUTPUT}/${LEVEL}/${LG}/ensemble"
+        for TRAIN in "${DATA}/${LEVEL}/"*"_train.tsv"; do
+            LG="$(basename ${TRAIN} _train.tsv)"
+            for SPLIT in dev test; do
+                python trans/ensembling.py \
+                    --gold "${DATA}/${LEVEL}/${LG}_${SPLIT}.tsv" \
+                    --systems "${OUTPUT}/${LEVEL}/${LG}/"*"/${SPLIT}_beam${BEAM_WIDTH}.predictions" \
+                    --output "${OUTPUT}/${LEVEL}/${LG}/ensemble"
+            done
         done
     done
 }
 
 evaluate() {
+    # Creates two-column TSV with gold and hypothesis data.
     for LEVEL in low medium high; do
-        # TODO(kbg): Revert to test path when test data becomes available.
-        for DEV in "${DATA}/${LEVEL}/"*"_dev.tsv"; do
-            LG="$(basename ${DEV} _dev.tsv)"
-            paste \
-                "${DEV}" \
-                "${OUTPUT}/${LEVEL}/${LG}/ensemble/dev_${MAX_ENSEMBLE_SIZE}ensemble.predictions" \
-            | cut -f2,4 \
-            > "${OUTPUT}/${LEVEL}/${LG}/ensemble/dev_${MAX_ENSEMBLE_SIZE}ensemble.tsv"
+        for TRAIN in "${DATA}/${LEVEL}/"*"_train.tsv"; do
+            LG="$(basename ${TRAIN} _train.tsv)"
+            for SPLIT in dev test; do
+                paste \
+                    "${TRAIN//_train.tsv/_${SPLIT}.tsv}" \
+                    "${OUTPUT}/${LEVEL}/${LG}/ensemble/${SPLIT}_${MAX_ENSEMBLE_SIZE}ensemble.predictions" \
+                    | cut -f2,4 \
+                    > "${OUTPUT}/${LEVEL}/${LG}/ensemble/${SPLIT}_${MAX_ENSEMBLE_SIZE}ensemble.tsv"
+            done
         done
-	echo "Level: ${LEVEL}"
-        python ${EVALUATION}/./evaluate_all.py \
-            "${OUTPUT}/${LEVEL}/"*"/ensemble/dev_${MAX_ENSEMBLE_SIZE}ensemble.tsv"
-	echo
+    done
+    # Calls evaluation script.
+    for SPLIT in dev test; do
+        for LEVEL in low medium high; do
+            echo "${SPLIT} ${LEVEL}:"
+            python ${EVALUATION}/./evaluate_all.py \
+                "${OUTPUT}/${LEVEL}/"*"/ensemble/${SPLIT}_${MAX_ENSEMBLE_SIZE}ensemble.tsv"
+            echo
+        done
     done
 }
 
 main() {
-    rm -rf ${OUTPUT}
-    mkdir "${OUTPUT}"
+    mkdir -p "${OUTPUT}"
     train
     ensemble
     evaluate
