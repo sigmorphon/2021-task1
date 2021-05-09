@@ -9,6 +9,14 @@ Please sign up for the mailing list
 [here](https://groups.google.com/u/1/g/sigmorphon-2021-task-1) by
 clicking the button labeled "Ask to join group".
 
+## Results
+
+The task is now complete. System papers and a summary of the task will appear in
+the SIGMORPHON 2021 proceedings.
+
+* [Preliminary results](https://docs.google.com/spreadsheets/d/1cSbhxbUPFsB72Amv8OzbGcEbs54XOShR5WxC3PNaYTA/edit?usp=sharing)
+* [Submissions](https://drive.google.com/drive/folders/1Fer7UfHBnt5k-WFHsVXQO8ac3BvREAyC)
+
 ## Data
 
 ### Source
