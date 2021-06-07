@@ -182,6 +182,14 @@ The task is organized by members of the Computational Linguistics Lab at the
 Institut für Computerlinguistik at the [University of
 Zurich](https://www.uzh.ch/en.html).
 
+## Licensing
+
+The code is released under the [Apache License 2.0](
+https://www.apache.org/licenses/LICENSE-2.0). The data is released
+under the [Creative Commons Attribution-ShareAlike 3.0 Unported License](
+https://creativecommons.org/licenses/by-sa/3.0/legalcode) inherited from
+Wiktionary itself.
+
 ## References
 
 Gorman, K., Ashby, L. F.E., Goyzueta, A., McCarthy, A. D., Wu, S., and You, D.
